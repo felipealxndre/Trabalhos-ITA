@@ -1,14 +1,10 @@
 #Grupo - Pinguins de Madagascar
-#Integrantes:
+#Integrante:
 # - Thiago Akira Missato
-# - Marcela Azevedo Ximenes
-# - Tatiana Pasold
-# - Felipe Alexandre
-# - Eduardo Pinto Ferreira
-# - Gustavo Mariante
 
 import numpy as np
 from aux_tools import geo_change_sweep, atmosphere
+
 
 ft2m = 0.3048
 kt2ms = 0.514444
@@ -114,10 +110,113 @@ def default_aircraft():
         
     return(aircraft)
 
-#------------------------------------------------------------------------------
 
-#Importar dados da aeronave padrao
+def my_aircraft():
+    # Defining general geometric parameters
+    wing = {'S': 105.5, #Otimizado para fornecer tração mínima
+            'AR':10.2, #Otimizar no acompanhamento
+            'taper':0.3, #Dados históricos
+            'sweep':23*np.pi/180,  #Otimizar no acompanhamento
+            'dihedral':4*np.pi/180, #Carteado
+            'xr':11.6, #Posição da asa
+            'zr':-3.42/2, #Altura da asa
+            'tcr': 0.123,
+            'tct': 0.096,
+            'c_tank_c_w': 0.4,
+            'x_tank_c_w': 0.2}
+   
+    EH  =  {'Cht':1.1, #Carteado
+            'AR':3.5, #Carteado
+            'taper':0.4, #Carteado
+            'sweep':26*np.pi/180, #Fokker 100
+            'dihedral':0*np.pi/180, #Fokker 100
+            'Lc':3.6,
+            'zr':1.0318,
+            'tcr': 0.1,
+            'tct': 0.1,
+            'eta': 1.0}
+   
+    EV  =  {'Cvt':0.08, #Carteado
+            'AR':1.0, #Carteado
+            'taper':0.8, #Fokker 100
+            'sweep':41*np.pi/180, #Default
+            'Lb':0.38,
+            'zr':1.4968,
+            'tcr': 0.1,
+            'tct': 0.1}
+   
+    geo_param = {'wing':wing,
+                 'EH':EH,
+                 'EV':EV}
+   
+    aircraft = {'geo_param':geo_param}
+   
+    flap = {'max_def': 40 * np.pi/180,
+            'type': 'double slotted', #Carteado
+            'c_flap_c_wing': 1.3,
+            'b_flap_b_wing': 0.5,}
+   
+    slat = {'max_def': 0.523598775598298, #NÃO TEMOS
+            'type': 'slat',
+            'c_slat_c_wing': 1.05,
+            'b_slat_b_wing': 0.75}
+   
+    engines = {'n': 2,
+               'n_uw': 2,
+               'BPR': 5.0}
+   
+    misc = {'kexc': 0.03,
+            'rho_f': 804.0, #Densidade do combustível
+            'x_tailstrike': 23.68,
+            'z_tailstrike': -0.84,
+            'CLmax_airfoil': 2.3}
+   
+    # Valor original de payload: 8795 kg + 3900 kg de cargo -> Não decola.
+    # Valor modificado de payload: 8795 kg + 1900 kg de cargo -> Otimizado
+
+
+    weights = {'W_payload': 10695*9.81, # Passageiro + Cargo Mass
+               'xcg_payload': 14.0, # Posição do CG do payload estimado
+               'W_crew': 4*(80+20)*9.81, # Tripulantes + Bagagem
+               'xcg_crew': 2.5,
+               'per_xcg_allelse': 0.45}
+   
+    aircraft['weights'] = weights
+   
+    data = {'engines': engines,
+            'flap': flap,
+            'slat': slat,
+            'misc':misc}
+   
+    aircraft['data'] = data
+   
+    fus = {'Lf': 30.20, #Atualizado para a nossa aeronave
+           'Df': 3.42}  #Atualizado para a nossa aeronave
+   
+    aircraft['dimensions'] = {}
+    aircraft['dimensions']['fus'] = fus
+   
+    nacelle = {'Ln': 3.1, #Comprimento do CF34-8E
+               'Dn': 1.3, #Diâmetro do CF34-8E
+               'xn': 12.0, #cad
+               'yn': 4.2, #cad
+               'zn': -2.5192} #cad
+   
+    aircraft['dimensions']['nacelle'] = nacelle
+   
+    ldg = {'xnlg': 2.8,
+           'xmlg': 16.3,
+           'ymlg': 2.47,
+           'z': -3.67}
+   
+    aircraft['dimensions']['ldg'] = ldg
+       
+    return(aircraft)
+
+#------------------------------------------------------------------------------
 def geometry(aircraft):
+
+    #Importar dados da aeronave padrao
 
 	#Dados da asa
 	AR_w = aircraft['geo_param']['wing']['AR']
@@ -233,10 +332,6 @@ def geometry(aircraft):
 	dimensions['EV']['zm'] = z_mv
       
 	return dimensions
-
-
-#------------------------------------------------------------------------------
-# Insira a funcao geometry aqui!
 #------------------------------------------------------------------------------
 
 def aerodynamics(aircraft, Mach, altitude, n_engines_failed, flap_def, 
@@ -244,6 +339,8 @@ def aerodynamics(aircraft, Mach, altitude, n_engines_failed, flap_def,
     
     geo_param = aircraft['geo_param']
     dimensions = aircraft['dimensions']
+
+    #Import dados da aeronave padrao.
     
     S_w = geo_param['wing']['S']
     AR_w = geo_param['wing']['AR']
@@ -542,6 +639,23 @@ def empty_weight(aircraft, W0_guess, T0_guess):
     xcg_e = (W_w*xcg_w + W_h*xcg_h + W_v*xcg_v + W_f*xcg_f +
              W_nlg*xcg_nlg + W_mlg*xcg_mlg + W_eng_installed*xcg_eng +
              W_allelse*xcg_allelse)/We
+    
+    aircraft['weights']['xcg_w'] = xcg_w
+    aircraft['weights']['xcg_h'] = xcg_h
+    aircraft['weights']['xcg_v'] = xcg_v
+    aircraft['weights']['xcg_f'] = xcg_f
+    aircraft['weights']['xcg_nlg'] = xcg_nlg
+    aircraft['weights']['xcg_mlg'] = xcg_mlg
+    aircraft['weights']['xcg_eng'] = xcg_eng
+    aircraft['weights']['xcg_allelse'] = xcg_allelse
+    aircraft['weights']['W_w'] = W_w
+    aircraft['weights']['W_h'] = W_h
+    aircraft['weights']['W_v'] = W_v
+    aircraft['weights']['W_fus'] = W_f
+    aircraft['weights']['W_nlg'] = W_nlg
+    aircraft['weights']['W_mlg'] = W_mlg
+    aircraft['weights']['W_eng'] = W_eng
+    aircraft['weights']['W_allelse'] = W_allelse
     
     weightsvec = [W_w,  W_h, W_v, W_f, W_nlg, W_mlg, W_eng_installed, W_allelse]
     return We, xcg_e, weightsvec
@@ -980,7 +1094,6 @@ def thrust_matching(aircraft, W0_guess, T0_guess,
     return W0, We, Wf, xcg_e, T0, T0vec, S_wlan
 
 #------------------------------------------------------------------------------
-
 def balance(aircraft, Mach_cruise):
 
     geo_param = aircraft['geo_param']
@@ -1072,6 +1185,8 @@ def balance(aircraft, Mach_cruise):
     xcg_list = [xcg_2, xcg_3, xcg_4, xcg_5]
     xcg_fwd_flight = min(xcg_list)
     xcg_aft_flight = max(xcg_list)
+    
+    aircraft['weights']['xcg_list'] = xcg_list
 
     ### NEUTRAL POINT
 
@@ -1100,6 +1215,8 @@ def balance(aircraft, Mach_cruise):
 
     # Neutral point position (Raymer Eq 16.9 and Eq 16.23)
     xnp = (CLa_w*xac_w - CMa_f*cm_w + eta_h*S_h/S_w*CLa_h*(1-deda)*xac_h)/(CLa_w + eta_h*S_h/S_w*CLa_h*(1-deda))
+
+    aircraft['weights']['xnp'] = xnp
 
     # Static margin
     SM_fwd = (xnp - xcg_fwd_flight)/cm_w
@@ -1191,8 +1308,264 @@ def analyze(aircraft, W0_guess, T0_guess,
     # Landing gear design
     frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = landing_gear(aircraft)
 
+    print(T0)
+
+    return W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn
 
 
-    return W0, Wf, T0, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn
 
-#------------------------------------------------------------------------------
+
+def moment_of_inertia(aircraft):
+    
+    import moi_mod as mm
+    
+    Ixxt = 0.0
+    Iyyt = 0.0
+    Izzt = 0.0
+    Ixyt = 0.0
+    Ixzt = 0.0
+    Iyzt = 0.0
+    
+    # Reference point
+    xref = aircraft['weights']['xcg_list'][-1]
+    yref = 0.0
+    zref = 0.0
+    
+    # Right wing + 50% fuel           
+    xr = aircraft['geo_param']['wing']['xr']
+    yr = 0.0
+    zr = aircraft['geo_param']['wing']['zr']
+    cr = aircraft['dimensions']['wing']['cr']
+    tcr = aircraft['geo_param']['wing']['tcr']
+    xt = aircraft['dimensions']['wing']['xt']
+    yt = aircraft['dimensions']['wing']['yt']
+    zt = aircraft['dimensions']['wing']['zt']
+    ct = aircraft['dimensions']['wing']['ct']
+    tct = aircraft['geo_param']['wing']['tct']
+    mass = (aircraft['weights']['W_w']+0.5*aircraft['weights']['Wf'])*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.surf_moi(xr,yr,zr,cr,tcr,
+                                          xt,yt,zt,ct,tct,
+                                          xref,yref,zref,
+                                          mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Left wing + 50% fuel    
+    xr = aircraft['geo_param']['wing']['xr']
+    yr = 0.0
+    zr = aircraft['geo_param']['wing']['zr']
+    cr = aircraft['dimensions']['wing']['cr']
+    tcr = aircraft['geo_param']['wing']['tcr']
+    xt = aircraft['dimensions']['wing']['xt']
+    yt = -aircraft['dimensions']['wing']['yt']
+    zt = aircraft['dimensions']['wing']['zt']
+    ct = aircraft['dimensions']['wing']['ct']
+    tct = aircraft['geo_param']['wing']['tct']
+    mass = (aircraft['weights']['W_w']+0.5*aircraft['weights']['Wf'])*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.surf_moi(xr,yr,zr,cr,tcr,
+                                          xt,yt,zt,ct,tct,
+                                          xref,yref,zref,
+                                          mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Right HT                
+    xr = aircraft['dimensions']['EH']['xr']
+    yr = 0.0
+    zr = aircraft['geo_param']['EH']['zr']
+    cr = aircraft['dimensions']['EH']['cr']
+    tcr = aircraft['geo_param']['EH']['tcr']
+    xt = aircraft['dimensions']['EH']['xt']
+    yt = aircraft['dimensions']['EH']['yt']
+    zt = aircraft['dimensions']['EH']['zt']
+    ct = aircraft['dimensions']['EH']['ct']
+    tct = aircraft['geo_param']['EH']['tct']
+    mass = aircraft['weights']['W_h']*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.surf_moi(xr,yr,zr,cr,tcr,
+                                          xt,yt,zt,ct,tct,
+                                          xref,yref,zref,
+                                          mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Left HT                
+    xr = aircraft['dimensions']['EH']['xr']
+    yr = 0.0
+    zr = aircraft['geo_param']['EH']['zr']
+    cr = aircraft['dimensions']['EH']['cr']
+    tcr = aircraft['geo_param']['EH']['tcr']
+    xt = aircraft['dimensions']['EH']['xt']
+    yt = -aircraft['dimensions']['EH']['yt']
+    zt = aircraft['dimensions']['EH']['zt']
+    ct = aircraft['dimensions']['EH']['ct']
+    tct = aircraft['geo_param']['EH']['tct']
+    mass = aircraft['weights']['W_h']*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.surf_moi(xr,yr,zr,cr,tcr,
+                                          xt,yt,zt,ct,tct,
+                                          xref,yref,zref,
+                                          mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # VT
+    xr = aircraft['dimensions']['EV']['xr']
+    yr = 0.0
+    zr = aircraft['geo_param']['EV']['zr']
+    cr = aircraft['dimensions']['EV']['cr']
+    tcr = aircraft['geo_param']['EV']['tcr']
+    xt = aircraft['dimensions']['EV']['xt']
+    yt = 0.0
+    zt = aircraft['dimensions']['EV']['zt']
+    ct = aircraft['dimensions']['EV']['ct']
+    tct = aircraft['geo_param']['EV']['tct']
+    mass = aircraft['weights']['W_v']/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.surf_moi(xr,yr,zr,cr,tcr,
+                                          xt,yt,zt,ct,tct,
+                                          xref,yref,zref,
+                                          mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Fuselage + allelse + payload + crew
+    xn = 0.0
+    yn = 0.0
+    zn = 0.0
+    Lcyl = aircraft['dimensions']['fus']['Lf']
+    Dcyl = aircraft['dimensions']['fus']['Df']
+    mass = (aircraft['weights']['W_fus']+aircraft['weights']['W_allelse'] + \
+            aircraft['weights']['W_payload'] + aircraft['weights']['W_crew'])/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.cyl_moi(xn,yn,zn,
+                                         Lcyl,Dcyl,
+                                         xref,yref,zref,
+                                         mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Right engine
+    xn = aircraft['dimensions']['nacelle']['xn']
+    yn = aircraft['dimensions']['nacelle']['yn']
+    zn = aircraft['dimensions']['nacelle']['zn']
+    Lcyl = aircraft['dimensions']['nacelle']['Ln']
+    Dcyl = aircraft['dimensions']['nacelle']['Dn']
+    mass = aircraft['weights']['W_eng']*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.cyl_moi(xn,yn,zn,
+                                         Lcyl,Dcyl,
+                                         xref,yref,zref,
+                                         mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Left engine
+    xn = aircraft['dimensions']['nacelle']['xn']
+    yn = -aircraft['dimensions']['nacelle']['yn']
+    zn = aircraft['dimensions']['nacelle']['zn']
+    Lcyl = aircraft['dimensions']['nacelle']['Ln']
+    Dcyl = aircraft['dimensions']['nacelle']['Dn']
+    mass = aircraft['weights']['W_eng']*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.cyl_moi(xn,yn,zn,
+                                         Lcyl,Dcyl,
+                                         xref,yref,zref,
+                                         mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Nose landing gear
+    x = aircraft['dimensions']['ldg']['xnlg']
+    y = 0.0
+    z = aircraft['dimensions']['ldg']['z']
+    mass = aircraft['weights']['W_nlg']/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.point_moi(x,y,z,
+                                           xref,yref,zref,
+                                           mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Right landing gear
+    x = aircraft['dimensions']['ldg']['xmlg']
+    y = aircraft['dimensions']['ldg']['ymlg']
+    z = aircraft['dimensions']['ldg']['z']
+    mass = aircraft['weights']['W_mlg']*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.point_moi(x,y,z,
+                                           xref,yref,zref,
+                                           mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    # Left landing gear
+    x = aircraft['dimensions']['ldg']['xmlg']
+    y = -aircraft['dimensions']['ldg']['ymlg']
+    z = aircraft['dimensions']['ldg']['z']
+    mass = aircraft['weights']['W_mlg']*0.5/gravity
+    
+    Ixx,Iyy,Izz,Ixy,Ixz,Iyz = mm.point_moi(x,y,z,
+                                           xref,yref,zref,
+                                           mass)
+    
+    Ixxt += Ixx
+    Iyyt += Iyy
+    Izzt += Izz
+    Ixyt += Ixy
+    Ixzt += Ixz
+    Iyzt += Iyz
+    
+    return Ixxt,Iyyt,Izzt,Ixyt,Ixzt,Iyzt
