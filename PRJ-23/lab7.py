@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import design_tools as dt
-import aux_tools as at
+from aux_tools import atmosphere
 import seaborn as sns
 
 # configuração padrão
@@ -19,23 +19,40 @@ aircraft['dimensions'].update(new_dimensions)
 
 
 # colocar os dados da aeronave:
-gravity = 9.80665   
-RHO_SL = 1.225     # Densidade nível do mar (kg/m³)
+gravity = 9.80665 # mesma do auxtools  
 
-S = 120.77         # Área da asa (m²)
-c = 5.64           # Corda média aerodinâmica (m)
-CL_max = 2.1       # CLmax positivo
-CL_min = -0.8      # CLmax negativo
-a = 5.9            # É o CLalpha (1/rad)
+rho = {
+    'SL': atmosphere(z=0, Tba=288.15)[2],
+    '10000': atmosphere(z=10000 * 0.3048, Tba=288.15)[2],
+    '35000': atmosphere(z=35000 * 0.3048, Tba=288.15)[2],
+}
 
-n_limit_pos = 2.5  # Fator de carga limite positivo
-n_limit_neg = -1.0 # Fator de carga limite negativo
+S = aircraft['geo_param']['wing']['S']         # Área da asa (m²)
+c = aircraft['dimensions']['wing']['cm']       # Corda média aerodinâmica 
 
-VC = 175.0         # Velocidade de Cruzeiro (m/s)
-VD = 218.5         # Velocidade de Mergulho (m/s)
+CL_max = 1.30161                               # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
 
-Ude_VC = 17.07     # Velocidade da rajada de projeto em V_C (m/s)
-Ude_VD = 8.53      # Velocidade da rajada de projeto em V_D (m/s)
+CL_min = -0.5                                  # Coeficiente de sustentação máximo negativo (CL,min)- Lab 4
+
+a = 7.35940                                    # dCL/dalpha [em radianos] - Lab 4
+
+# Esses aqui são dados que pegamos do FAR Part 25
+
+n_limit_pos = 2.5                               # Fator de carga limite positivo 
+                                                # O regulamento (FAR 25.337) define 2.5 para aeronaves de categoria transporte
+n_limit_neg = -1.0                              # Fator de carga limite negativo (n_limit, neg). 
+                                                # O regulamento (FAR 25.337) define -1.0 para aeronaves de transporte
+VC = 221.36                                     # Velocidade de Cruzeiro de Projeto (VC) - antes tava 175.0 
+                                                # A aeronave deve ser capaz de suportar rajadas nesta velocidade
+VD = 1.25 * VC                                  # Velocidade de Mergulho de Projeto (VD). 
+                                                # O regulamento exige VD ≥ 1.25 * VC
+
+# Parâmetros de Rajada (Gust) - também vem do FAR 25
+
+Ude_VC = 56 * 0.3048                            # Velocidade de Rajada de Projeto (Ude) em VC
+                                                # 56 ft/s em VC do regulamento
+Ude_VD = 28 * 0.3048                            # Velocidade de Rajada de Projeto (Ude) em VD
+                                                # 28 ft/s em VD (metade de VC) do regulamento
 
 
 def calcular_diagrama_vn(W, rho, nome_caso):
@@ -55,7 +72,7 @@ def calcular_diagrama_vn(W, rho, nome_caso):
     print(f"\n  Peso (W):              {W:,.0f} N")
     print(f"  Densidade (ρ):         {rho:.3f} kg/m³")
     print(f"  Carga Alar (W/S):      {W_S:.2f} N/m²")
-    # Velocidade de Estol (1g) -- L = W
+    # Velocidade de Estol (1g) -> L = W
     VS = math.sqrt((2 * W_S) / (rho * CL_max))
     # Velocidade de Manobra
     VA = VS * math.sqrt(n_limit_pos)
@@ -165,30 +182,67 @@ def get_dataframe(nome_caso, VS, VA, VC, VD, W, rho, mu_g, Kg, delta_n_C, delta_
     
     return df
 
+
+# calculando os pesos
+
+gravity = 9.81
+W0_guess = 43090 * gravity
+T0_guess = 125600
+
+Mach_cruise = 0.75
+altitude_cruise = 11000
+range_cruise = 2390000.0
+
+Mach_altcruise = 0.4
+range_altcruise = 370000
+altitude_altcruise = 4572
+
+loiter_time = 2700
+
+altitude_takeoff = 0
+distance_takeoff = 1520
+TO_flap_def = 0.34906585039887
+TO_slat_def = 0
+
+altitude_landing = 0
+distance_landing = 1520
+LD_flap_def = 0.69813170079773
+LD_slat_def = 0
+MLW_frac = 0.84
+# W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = dt.analyze(aircraft, W0_guess, T0_guess, Mach_cruise, altitude_cruise, range_cruise, Mach_altcruise, range_altcruise, altitude_altcruise, loiter_time, altitude_takeoff, distance_takeoff, TO_flap_def, TO_slat_def, altitude_landing, distance_landing, LD_flap_def, LD_slat_def, MLW_frac)
+pesos = dt.analyze(aircraft, W0_guess, T0_guess, Mach_cruise, altitude_cruise, range_cruise, Mach_altcruise, range_altcruise, altitude_altcruise, loiter_time, altitude_takeoff, distance_takeoff, TO_flap_def, TO_slat_def, altitude_landing, distance_landing, LD_flap_def, LD_slat_def, MLW_frac)
+
+MTOW = pesos[0]  # peso máximo de decolagem
+MZFW = pesos[0] - pesos[1]  # peso máximo sem combustível = MTOW - peso do combustível
+W_projeto = 39071.40*gravity  # ponto de projeto - cruzeiro típico
+
+print(f"MTOW: {MTOW:.2f} N")
+print(f"MZFW: {MZFW:.2f} N")
+print(f"W_projeto: {W_projeto:.2f} N")
+
 # casos de estudo
 # dai temos que saber os pesos e densidades em cada caso
 caso1 = calcular_diagrama_vn(
-    W=800544.0,
-    rho=RHO_SL,
+    W=MTOW,
+    rho=rho['SL'],
     nome_caso="MTOW @ Nível do Mar"
 )
 
-
 caso2 = calcular_diagrama_vn(
-    W=667120.0,
-    rho=RHO_SL,
+    W=MZFW,
+    rho=rho['SL'],
     nome_caso="MZFW @ Nível do Mar"
 )
 
 caso3 = calcular_diagrama_vn(
-    W=733616.0,
-    rho=0.381,
+    W=W_projeto,
+    rho=rho['35000'],
     nome_caso="Peso de Cruzeiro @ 35000 ft"
 )
 
 caso4 = calcular_diagrama_vn(
-    W=711712.0,
-    rho=1.056,
+    W=W_projeto,
+    rho=rho['10000'],
     nome_caso="Peso de Pouso @ 10000 ft"
 )
 
