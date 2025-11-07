@@ -13,7 +13,7 @@ from aux_tools import atmosphere
 import seaborn as sns
 
 # configuração padrão
-aircraft = dt.default_aircraft()
+aircraft = dt.my_aircraft()
 new_dimensions = dt.geometry(aircraft)
 aircraft['dimensions'].update(new_dimensions)
 
@@ -39,11 +39,11 @@ a = 7.35940                                    # dCL/dalpha [em radianos] - Lab 
 # Esses aqui são dados que pegamos do FAR Part 25
 
 n_limit_pos = 2.5                               # Fator de carga limite positivo 
-                                                # O regulamento (FAR 25.337) define 2.5 para aeronaves de categoria transporte
-n_limit_neg = -1.0                              # Fator de carga limite negativo (n_limit, neg). 
-                                                # O regulamento (FAR 25.337) define -1.0 para aeronaves de transporte
-VC = 221.36                                     # Velocidade de Cruzeiro de Projeto (VC) - antes tava 175.0 
-                                                # A aeronave deve ser capaz de suportar rajadas nesta velocidade
+                                                 # O regulamento (FAR 25.337) define 2.5 para aeronaves de categoria transporte
+n_limit_neg = -1.0                              # Fator de carga limite negativo (n_limit, neg).
+                                                 # O regulamento (FAR 25.337) define -1.0 para aeronaves de transporte
+VC = 221.36                                       # Velocidade de Cruzeiro de Projeto (VC) - antes tava 175.0
+                                                 # A aeronave deve ser capaz de suportar rajadas nesta velocidade
 VD = 1.25 * VC                                  # Velocidade de Mergulho de Projeto (VD). 
                                                 # O regulamento exige VD ≥ 1.25 * VC
 
