@@ -8,7 +8,7 @@ aircraft.c = 3.526898620375959;     % Wing mean aerodynamic chord [m]
 aircraft.b = 32.803963175201865;     % Wing span [m]
 %--------------------------------------------------------------------------
 % Inertia properties:
-aircraft.m = ;       % Mass [kg]
+aircraft.m = 44278.940051969854;       % Mass [kg]
 aircraft.Ixx = 512653.72254536394;      % I_{xx} [kg.m^2]
 aircraft.Iyy = 2389904.9749673614;      % I_{yy} [kg.m^2]
 aircraft.Izz = 2748106.383976222;      % I_{zz} [kg.m^2]
@@ -43,8 +43,8 @@ aircraft.Cm_i_t = -0.080744;          % [1/rad] (Cmg2 - AVL ST)
 aircraft.Cm_delta_e = -0.063284;        % [1/rad] (Cmd3 - AVL ST)
 % Drag coefficient:
 aircraft.CD_0 = 0.06378;            % [-] (CD0)
-aircraft.CD_alpha = ;             % [1/rad]
-aircraft.CD_alpha2 = ;             % [1/rad^2]
+aircraft.CD_alpha = 0.002419;             % [1/rad]
+aircraft.CD_alpha2 = 0.031170;             % [1/rad^2]
 aircraft.CD_q = 0.410019;           % [1/rad] (CXq - AVL SB)
 aircraft.CD_i_t_0 = -0.02452;         % [1/rad] (CDffg2 * 180/pi)
 aircraft.CD_i_t_alpha = 0.013070;       % [1/rad^2] (CDit,alpha)

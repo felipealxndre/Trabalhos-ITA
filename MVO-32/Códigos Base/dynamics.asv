@@ -1,0 +1,83 @@
+function [Xdot, Y]= dynamics(t, X, U)
+
+global g
+global aircraft
+
+V = X(1);
+alpha_deg = X(2);
+q_deg_s = X(3);
+theta_deg = X(4);
+h = X(5);
+x = X(6);
+beta_deg = X(7);
+phi_deg = X(8);
+
+
+q_rad_s = deg2rad(q_deg_s);
+
+m = aircraft.m;
+iota_1_deg = aircraft.iota_1_deg;
+iota_2_deg = aircraft.iota_2_deg;
+Iyy = aircraft.Iyy;
+x_1 = aircraft.x_1;
+x_2 = aircraft.x_2;
+z_1 = aircraft.z_1;
+z_2 = aircraft.z_2;
+
+[D, L, M, Y, l, n] = aero_loads(X, U);
+[T1, T2] = prop_loads(X, U);
+
+%Capitulo 6, slide 35:
+Vdot = 1/m*(-D + T1*cosd(iota_1_deg + alpha_deg)...
+    + T2*cosd(iota_2_deg + alpha_deg)...
+    - m*g*sind(theta_deg - alpha_deg));
+alphadot_rad_s = q_rad_s...
+    + 1/(m*V)*(-L -T1*sind(iota_1_deg + alpha_deg) ...
+    -T2*sind(iota_2_deg + alpha_deg)...
+    + m*g*cosd(theta_deg - alpha_deg));
+qdot_rad_s2 = 1/Iyy*(M + z_1*T1*cosd(iota_1_deg) ...
+    + z_2*T2*cosd(iota_2_deg)...
+    + x_1*T1*sind(iota_1_deg) ...
+    + x_2*T2*sind(iota_2_deg));
+thetadot_deg_s = q_deg_s;
+hdot = V*sind(theta_deg - alpha_deg);
+xdot = V*cosd(theta_deg - alpha_deg);
+
+alphadot_deg_s = rad2deg(alphadot_rad_s);
+qdot_deg_s2 = rad2deg(qdot_rad_s2);
+
+Xdot = [
+    Vdot
+    alphadot_deg_s
+    qdot_deg_s2
+    thetadot_deg_s
+    hdot
+    xdot
+    betadot_deg_s
+    phidot_deg_s
+    pdot
+    rdot
+    psidot_deg_s
+    ydot
+    ];
+
+gamma_deg = theta_deg - alpha_deg;
+[rho,~,~,a] = ISA(h);
+Mach = V/a;
+q_bar = 0.5*rho*V^2;
+[CD,CL,Cm,CY,Cl,Cn] = aero_databank(X,U);
+
+Y = [
+    gamma_deg
+    T1
+    T2
+    Mach
+    CD
+    CL
+    Cm
+    CY
+    Cl
+    Cn
+    rho
+    q_bar
+    ];

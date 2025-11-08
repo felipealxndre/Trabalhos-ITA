@@ -1,4 +1,4 @@
-function [F_prop_b_1, F_prop_b_2] = prop_loads(X, U)
+function [T1, T2] = prop_loads(X, U)
 
 global aircraft
 run("create_aircraft.m");
@@ -9,6 +9,7 @@ rho = ISA(h);
 throttle_1 = U(1);
 throttle_2 = U(2);
 n_rho = aircraft.n_rho;
+Tmax = aircraft.Tmax;
 
 rho0 = 1.225;
 
