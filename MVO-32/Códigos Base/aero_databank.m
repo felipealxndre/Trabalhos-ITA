@@ -1,7 +1,6 @@
 function [CD,CL,Cm,CY,Cl,Cn] = aero_databank(X,U)
 
 global aircraft
-run("create_aircraft.m");
 
 CL_0 = aircraft.CL_0;
 CL_alpha = aircraft.CL_alpha;

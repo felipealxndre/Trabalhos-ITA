@@ -6,7 +6,6 @@ function [Xdot, Y] = dynamics(t, X, U)
 % Leitura de estados (todos em unidades usadas no curso: deg, deg/s)
 global g
 global aircraft
-run("create_aircraft.m"); % Removido por eficiência (deve estar no MAIN)
 
 V          = X(1);
 alpha_deg  = X(2);
@@ -39,44 +38,38 @@ Ixx    = aircraft.Ixx;
 Iyy    = aircraft.Iyy;
 Izz    = aircraft.Izz;
 Ixz    = aircraft.Ixz;
-
 Gamma  = Ixx*Izz - Ixz^2;   % parâmetro inercial
 
 % -------------------------------------------------------------------------
 % Componentes de velocidade no corpo a partir de (V, α, β)
-% u = V cosα cosβ ; v = V sinβ ; w = V sinα cosβ
 u = V * cos(alpha_rad) * cos(beta_rad);
 v = V * sin(beta_rad);
 w = V * sin(alpha_rad) * cos(beta_rad);
 
 % -------------------------------------------------------------------------
 % Obter Forças e Momentos
-
 % 1. Aerodinâmica
-% D, L (eixos do vento); Y_for, l_mom, M_mom, n_mom (eixos do corpo)
-[D, L, M_mom, Y_for, l_mom, n_mom] = aero_loads(X, U);
-M_aero_b = [l_mom; M_mom; n_mom];
+[D, L, m, Y, l, n] = aero_loads(X, U);
+M_aero_b = [l; m; n];
 
 % 2. Propulsão (Já em eixos do corpo)
 [F_prop_b, M_prop_C_b, T1, T2] = prop_loads(X, U);
 
-% 3. Gravidade (Em eixos do corpo) [cite: 2167-2176]
+% 3. Gravidade (Em eixos do corpo)
 F_grav_b = [-m*g*sin(theta_rad);
              m*g*cos(theta_rad)*sin(phi_rad);
              m*g*cos(theta_rad)*cos(phi_rad)];
 
 % 4. Converter Aero (D, L) para eixos do corpo
-% Matriz de rotação de eixos de vento (a) para corpo (b)
 C_b_a = [cos(alpha_rad)*cos(beta_rad), -cos(alpha_rad)*sin(beta_rad), -sin(alpha_rad);
          sin(beta_rad),                  cos(beta_rad),                   0;
          sin(alpha_rad)*cos(beta_rad), -sin(alpha_rad)*sin(beta_rad),  cos(alpha_rad)];
-
-F_aero_wind = [-D; Y_for; -L]; % Assumindo Y_for de aero_loads é Y_estabilidade
+      
+F_aero_wind = [-D; Y; -L]; 
 F_aero_b = C_b_a * F_aero_wind;
 
 % -------------------------------------------------------------------------
 % Dinâmica de Translação (Eixos do Corpo) 
-
 F_total_b = F_aero_b + F_prop_b + F_grav_b;
 
 udot = F_total_b(1)/m - q_rad_s*w + r_rad_s*v;
@@ -92,27 +85,28 @@ betadot_rad_s  = (vdot*V - v*Vdot) / (V * sqrt(u^2 + w^2));
 % Dinâmica de Rotação (Eixos do Corpo) 
 M_total_b = M_aero_b + M_prop_C_b;
 
-pdot_rad_s2 = ( Izz*M_total_b(1) + Ixz*M_total_b(3) - (Ixz*(Iyy - Ixx - Izz)*p_rad_s*q_rad_s) + (Ixz^2 + Izz*(Izz - Iyy))*q_rad_s*r_rad_s ) / Gamma;
+% LINHA 77 CORRIGIDA (sinal - no termo qr):
+pdot_rad_s2 = ( Izz*M_total_b(1) + Ixz*M_total_b(3) - (Ixz*(Iyy - Ixx - Izz)*p_rad_s*q_rad_s) - (Ixz^2 + Izz*(Izz - Iyy))*q_rad_s*r_rad_s ) / Gamma;
 qdot_rad_s2 = ( M_total_b(2) - (Ixx - Izz)*p_rad_s*r_rad_s - Ixz*(p_rad_s^2 - r_rad_s^2) ) / Iyy;
 rdot_rad_s2 = ( Ixz*M_total_b(1) + Ixx*M_total_b(3) - (Ixz*(Izz + Ixx - Iyy)*q_rad_s*r_rad_s) + (Ixz^2 + Ixx*(Ixx - Iyy))*p_rad_s*q_rad_s ) / Gamma;
 
 % -------------------------------------------------------------------------
-% Cinemática de Euler (Cap. 8, slide 20) [cite: 2267-2279]
+% Cinemática de Euler
 phidot_rad_s   = p_rad_s + tan(theta_rad)*( q_rad_s*sin(phi_rad) + r_rad_s*cos(phi_rad) );
 thetadot_rad_s = q_rad_s*cos(phi_rad) - r_rad_s*sin(phi_rad);
 psidot_rad_s   = ( q_rad_s*sin(phi_rad) + r_rad_s*cos(phi_rad) )/cos(theta_rad);
 
 % -------------------------------------------------------------------------
-% Cinemática de translação (Cap. 8, slide 34) [cite: 2470-2475]
+% Cinemática de translação
 xdot =  u*cos(theta_rad)*cos(psi_rad) ...
       + v*( sin(phi_rad)*sin(theta_rad)*cos(psi_rad) - cos(phi_rad)*sin(psi_rad) ) ...
       + w*( cos(phi_rad)*sin(theta_rad)*cos(psi_rad) + sin(phi_rad)*sin(psi_rad) );
-
+      
 ydot =  u*cos(theta_rad)*sin(psi_rad) ...
       + v*( cos(phi_rad)*cos(psi_rad) + sin(phi_rad)*sin(theta_rad)*sin(psi_rad) ) ...
       + w*( -sin(phi_rad)*cos(psi_rad) + cos(phi_rad)*sin(theta_rad)*sin(psi_rad) );
-
-hdot =  -1 * ( u*sin(theta_rad) - v*sin(phi_rad)*cos(theta_rad) - w*cos(phi_rad)*cos(theta_rad) );
+      
+hdot =  ( u*sin(theta_rad) - v*sin(phi_rad)*cos(theta_rad) - w*cos(phi_rad)*cos(theta_rad) );
 
 % -------------------------------------------------------------------------
 % Conversões finais para deg/deg/s (padrão do seu Xdot)
@@ -143,16 +137,14 @@ Xdot = [
 ];
 
 % -------------------------------------------------------------------------
-% Saídas Y [cite: 1063-1064]
+% Saídas Y
 [rho, ~, ~, a] = ISA(h);
 Mach  = V / a;
 q_bar = 0.5 * rho * V^2;
 
 [CD, CL, Cm, CY, Cl, Cn] = aero_databank(X, U);
 
-% Ângulo de trajetória (geral): γ = atan2(-ḣ, sqrt(ẋ^2 + ẏ^2))
-% hdot é positivo para CIMA, então usamos -hdot no atan2
-gamma_deg = rad2deg( atan2( hdot, hypot(xdot, ydot) ) );
+gamma_deg = rad2deg( asin( hdot / V ) );
 
 Y = [
     gamma_deg

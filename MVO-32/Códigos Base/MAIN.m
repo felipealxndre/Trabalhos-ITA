@@ -4,8 +4,7 @@ clc
 
 global g
 global aircraft
-
-run("create_aircraft.m");
+aircraft = create_aircraft();
 
 g = 9.80665;
 
@@ -22,8 +21,7 @@ options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10);
 %% Ex.2
 
 x_eq_0 = zeros(6,1);
-aircraft
-x_eq_0(1) = trim_par.V;        
+x_eq_0(1) = trim_par.V;    
 x_eq = fsolve(@trim_function,x_eq_0,options,trim_par);
 [~,X_eq,U_eq,Y_eq] = trim_function(x_eq,trim_par);
 
@@ -61,8 +59,6 @@ fprintf('\n');
 
 %% Ex.3
 
-%% Ex.3 - Linearização e Autovalores
-
 fprintf('\n----- EX.3 -----\n\n');
 
 % Pega o Xdot de equilíbrio (deve ser [0; 0; 0; ...])
@@ -92,8 +88,6 @@ for j = 1:n_states
     % Armazena a coluna na matriz A
     A(:, j) = A_col;
 end
-
-fprintf('Matriz A (Jacobiana) 12x12 calculada.\n');
 
 % Calcula autovalores (D_eig) e autovetores (V_eig)
 [V_eig, D_eig] = eig(A);
