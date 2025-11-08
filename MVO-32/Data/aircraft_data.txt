@@ -1,0 +1,41 @@
+
+
+aircraft.S = 105.5; % Reference wing area [m^2]
+aircraft.c = 3.526898620375959; % Wing mean aerodynamic chord [m]
+aircraft.b = 32.803963175201865; % Wing span [m]
+%--------------------------------------------------------------------------
+% Inertia properties:
+aircraft.m = 44278.940051969854; % Mass [kg]
+aircraft.Ixx = 512653.72254536394; % I_xx [kg.m^2]
+aircraft.Iyy = 2389904.9749673614; % I_yy [kg.m^2]
+aircraft.Izz = 2748106.383976222; % I_zz [kg.m^2]
+aircraft.Ixz = 39043.319615114786; % I_xz [kg.m^2]
+
+
+%--------------------------------------------------------------------------
+% pegar do enunciado
+% Propulsive model properties:
+aircraft.iota_1_deg = 2.0; % Left engine incidence [deg] 
+aircraft.tau_1_deg = 1.5; % Left engine toe-in angle [deg] 
+aircraft.x_1 = 12.0; % Left engine thrust action point x_b coordinate [m] (de design_tools.py, 'xn')
+aircraft.y_1 = -4.2; % Left engine thrust action point y_b coordinate [m] (de design_tools.py, -'yn')
+aircraft.z_1 = -2.5192; % Left engine thrust action point z_b coordinate [m] (de design_tools.py, 'zn')
+aircraft.iota_2_deg = 2.0; % Right engine incidence [deg] 
+aircraft.tau_2_deg = -1.5; % Right engine toe-in angle [deg] 
+aircraft.x_2 = 12.0; % Right engine thrust action point x_b coordinate [m] (de design_tools.py, 'xn')
+aircraft.y_2 = 4.2; % Right engine thrust action point y_b coordinate [m] (de design_tools.py, 'yn')
+aircraft.z_2 = -2.5192; % Right engine thrust action point z_b coordinate [m] (de design_tools.py, 'zn')
+aircraft.Tmax = 100000; % Maximum sea-level thrust for a single engine [N] 
+aircraft.n_rho = 0.8; % Air density exponent in the thrust model [-]
+
+%--------------------------------------------------------------------------
+% outros parametros
+
+trim_par = struct('V',37.66421330423675,'h',11000,'gamma_deg',-3,...
+    'thetadot_deg_s',0);
+
+
+% dados lab 4
+
+Cdalpha = 0.002419;
+Cdalha2 = 0.031170;

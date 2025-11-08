@@ -1,0 +1,25 @@
+aircraft.S = ;           % Reference wing area [m^2]
+aircraft.c = ;           % Wing mean aerodynamic chord [m]
+aircraft.b = ;           % Wing span [m]
+%--------------------------------------------------------------------------
+% Inertia properties:
+aircraft.m = ;              % Mass [kg]
+aircraft.Ixx = ;            % I_{xx} [kg.m^2]
+aircraft.Iyy = ;            % I_{yy} [kg.m^2]
+aircraft.Izz = ;            % I_{zz} [kg.m^2]
+aircraft.Ixz = ;            % I_{xz} [kg.m^2]
+%--------------------------------------------------------------------------
+% Propulsive model properties:
+aircraft.iota_1_deg = ;     % Left engine incidence [deg]
+aircraft.tau_1_deg = ;      % Left engine toe-in angle [deg]
+aircraft.x_1 = ;            % Left engine thrust action point x_b coordinate [m]
+aircraft.y_1 = ;            % Left engine thrust action point y_b coordinate [m]
+aircraft.z_1 = ;            % Left engine thrust action point z_b coordinate [m]
+aircraft.iota_2_deg = ;     % Right engine incidence [deg]
+aircraft.tau_2_deg = ;      % Right engine toe-in angle [deg]
+aircraft.x_2 = ;            % Right engine thrust action point x_b coordinate [m]
+aircraft.y_2 = ;            % Right engine thrust action point y_b coordinate [m]
+aircraft.z_2 = ;            % Right engine thrust action point z_b coordinate [m]
+aircraft.Tmax = ;           % Maximum sea-level thrust for a single engine [N]
+aircraft.n_rho = ;          % Air density exponent in the thrust model [-]
+%--------------------------------------------------------------------------
