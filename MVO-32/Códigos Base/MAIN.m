@@ -21,18 +21,11 @@ options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10);
 
 %% Ex.2
 
-trim_output = struct('X_eq',zeros(12,1),'U_eq',zeros(6,1),'Y_eq',zeros(12,1));
-
 x_eq_0 = zeros(6,1);
 x_eq_0(1) = trim_par.V;        
 x_eq = fsolve(@trim_function,x_eq_0,options,trim_par);
 [~,X_eq,U_eq,Y_eq] = trim_function(x_eq,trim_par);
 
-trim_output.X_eq = X_eq;
-trim_output.U_eq = U_eq;
-trim_output.Y_eq = Y_eq;
-
-% Impressão resumida
 fprintf('\n----- EX.2 -----\n\n');
 fprintf('   %-12s = %8.2f %s\n','V',X_eq(1),'m/s');
 fprintf('   %-12s = %8.3f %s\n','alpha',X_eq(2),'deg');
@@ -64,8 +57,6 @@ fprintf('   %-12s = %8.4f %s\n','C_n',Y_eq(10),'');
 fprintf('   %-12s = %8.4f %s\n','rho',Y_eq(11),'kg/m^3');
 fprintf('   %-12s = %8.1f %s\n','qbar',Y_eq(12),'N/m^2');
 fprintf('\n');
-
-save trim_output_L3_Ex2.mat trim_output
 
 %% Ex.3
 

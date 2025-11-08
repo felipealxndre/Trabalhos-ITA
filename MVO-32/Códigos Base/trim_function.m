@@ -58,8 +58,6 @@ hdot_eq = 0;           % γ = 0
 xdot_eq = V_eq;        % ẋ = V (reta; ψdot = 0)
 thetadot_eq = trim_par.thetadot_deg_s; % 0 deg/s
 
-% Resíduos (6 equações = 6 incógnitas)
-% Longitudinais: zera acelerações e casa as taxas cinemáticas
 f = [
     Xdot(1);                     % Vdot = 0
     Xdot(2);                     % alphadot = 0
