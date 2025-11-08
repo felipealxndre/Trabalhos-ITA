@@ -24,13 +24,7 @@ options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10);
 trim_output = struct('X_eq',zeros(12,1),'U_eq',zeros(6,1),'Y_eq',zeros(12,1));
 
 x_eq_0 = zeros(6,1);
-x_eq_0(1) = trim_par.V;
-x_eq_0(1) = trim_par.V; 
-x_eq_0(2) = 3.0;         
-x_eq_0(3) = 0.0;          
-x_eq_0(4) = x_eq_0(2);   
-x_eq_0(5) = 0.50;        
-x_eq_0(6) = 0.0;           
+x_eq_0(1) = trim_par.V;        
 x_eq = fsolve(@trim_function,x_eq_0,options,trim_par);
 [~,X_eq,U_eq,Y_eq] = trim_function(x_eq,trim_par);
 
