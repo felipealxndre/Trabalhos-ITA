@@ -1,4 +1,4 @@
-function [T1, T2] = prop_loads(X, U)
+function [F_prop_b, M_prop_C_b, T1, T2] = prop_loads(X, U)
 
 global aircraft
 run("create_aircraft.m");

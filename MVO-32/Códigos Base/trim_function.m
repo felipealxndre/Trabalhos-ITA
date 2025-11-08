@@ -14,6 +14,7 @@ theta_deg      = x(4);
 delta_c        = x(5);   % throttle comum (δ1 = δ2 = δc)
 i_t_deg        = x(6);
 
+
 % Monta estados completos (ver Eq. (20) da Lista 3)
 % X = [ V α q θ h x β ϕ p r ψ y ]^T  (ângulos em deg; vel ang em deg/s)
 X = [
