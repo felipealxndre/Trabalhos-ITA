@@ -9,7 +9,7 @@ run("create_aircraft.m");
 
 g = 9.80665;
 
-trim_par = struct('V',37.66421330423675,'h',11000,'gamma_deg',-3,...
+trim_par = struct('V',228.8138886191133,'h',11000,'gamma_deg',-3,...
     'thetadot_deg_s',0);
 
 % https://www.mathworks.com/help/optim/ug/tolerances-and-stopping-criteria.html

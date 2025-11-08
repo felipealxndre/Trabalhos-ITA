@@ -31,8 +31,8 @@ aircraft.n_rho = 0.8; % Air density exponent in the thrust model [-]
 %--------------------------------------------------------------------------
 % outros parametros
 
-trim_par = struct('V',37.66421330423675,'h',11000,'gamma_deg',-3,...
-    'thetadot_deg_s',0);
+trim_par = struct('V',228.8138886191133,'h',11000,'gamma_deg',-3,...
+    'thetadot_deg_s',0);    
 
 
 % dados lab 4
