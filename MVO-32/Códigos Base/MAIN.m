@@ -96,7 +96,7 @@ lin_output.B = B;
 lin_output.C = C;
 lin_output.D = D;
 
-% [eigvec,eigval] = eig(lin_output(3).A);
+% [eigvec,eigval] = eig(lin_output.A);
 sel_states = 1:5;
 [eigvec,eigval] = eig(lin_output.A(sel_states,sel_states));
 eigval = diag(eigval);
@@ -163,5 +163,54 @@ plot_path
 plot_outputs
 
 %% Ex.6
+
+nX = length(X_eq);
+nU = length(U_eq);
+nY = length(Y_eq);
+
+lin_output = struct('A',zeros(nX,nX),...
+    'B',zeros(nX,nU),...
+    'C',zeros(nY,nX),...
+    'D',zeros(nY,nU));
+
+delta_val = 1e-5;
+
+A = zeros(nX,nX);
+C = zeros(nY,nX);
+for j=1:nX
+    dX = zeros(nX,1);
+    dX(j) = delta_val;
+    [Xdot_plus, Y_plus]= dynamics_Ex6(0, X_eq + dX, U_eq);
+    [Xdot_minus, Y_minus]= dynamics_Ex6(0, X_eq - dX, U_eq);
+    A(:, j) = (Xdot_plus - Xdot_minus)/(2*dX(j));
+    C(:, j) = (Y_plus - Y_minus)/(2*dX(j));
+end
+
+B = zeros(nX,nU);
+D = zeros(nY,nU);
+for j=1:nU
+    dU = zeros(nU,1);
+    dU(j) = delta_val;
+    [Xdot_plus, Y_plus]= dynamics_Ex6(0, X_eq, U_eq + dU);
+    [Xdot_minus, Y_minus]= dynamics_Ex6(0, X_eq, U_eq - dU);
+    B(:, j) = (Xdot_plus - Xdot_minus)/(2*dU(j));
+    D(:, j) = (Y_plus - Y_minus)/(2*dU(j));
+end
+
+lin_output.A = A;
+lin_output.B = B;
+lin_output.C = C;
+lin_output.D = D;
+
+% [eigvec,eigval] = eig(lin_output.A);
+sel_states = 1:10;
+[eigvec,eigval] = eig(lin_output.A(sel_states,sel_states));
+eigval = diag(eigval);
+[eigval,i_sort] = sort(eigval);
+eigvec = eigvec(:,i_sort);
+
+fprintf('\n----- EX.6 -----\n\n');
+damp(eigval)
+
 
 %% Ex.7

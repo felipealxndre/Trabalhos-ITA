@@ -1,11 +1,11 @@
-function [D, Y, L, l, m, n] = aero_loads(X,U)
+function [D, Y, L, l, m, n] = aero_loads_Ex6(X,U)
 
 global aircraft
 
 V = X(1);
 h = X(5);
 
-[CD, CY, CL, Cl, Cm, Cn] = aero_databank(X, U);
+[CD, CY, CL, Cl, Cm, Cn] = aero_databank_Ex6(X, U);
 
 rho = ISA(h);
 q_bar = 0.5*rho*V^2;
