@@ -4,7 +4,7 @@ clc
 
 global g
 global aircraft
-aircraft = create_aircraft();
+create_aircraft;
 
 g = 9.80665;
 

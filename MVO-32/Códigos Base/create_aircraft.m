@@ -1,4 +1,3 @@
-function aircraft = create_aircraft()
 % This script creates the structure variable 'aircraft'
 
 % DO NOT change the fields' names!
@@ -90,10 +89,7 @@ aircraft.Cn_delta_a_alpha = 0.000000;     % [1/rad^2] (Cndelta_a,alpha)
 aircraft.Cn_delta_r = -0.08417;        % [1/rad] (Cnd4 * -1 * 180/pi)
 
 
-end
-
 % 
-% function aircraft = create_aircraft()
 % % This script creates the structure variable 'aircraft'
 % 
 % % DO NOT change the fields' names!
@@ -198,4 +194,3 @@ end
 % aircraft.Cn_delta_a_alpha = 0.1881;                  % [1/rad^2] #ok!
 % aircraft.Cn_delta_r = -0.0939;                       % [1/rad] #ok!
 % 
-% end
