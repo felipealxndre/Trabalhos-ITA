@@ -3,11 +3,11 @@ function [f, X, U, Y] = trim_function(x, trim_par)
 alpha_deg = x(1);
 delta_c   = x(2);  
 i_t_deg   = x(3);
-delta_e_deg = 0;
 delta_a_deg = x(5);
 delta_r_deg = x(6);
 
 theta_deg = alpha_deg;
+delta_e_deg_eq = 0;
 
 X = [
     trim_par.V   % V [m/s]
@@ -31,7 +31,7 @@ U = [
     delta1
     delta2
     i_t_deg
-    delta_e_deg
+    0
     delta_a_deg
     delta_r_deg
 ];

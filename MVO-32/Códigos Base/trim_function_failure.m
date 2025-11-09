@@ -1,7 +1,7 @@
-function [f, X, U, Y] = trim_function(x, trim_par)
+function [f, X, U, Y] = trim_function_failure(x, trim_par)
 
 alpha_deg = x(1);
-delta_c   = x(2);  
+delta1   = x(2);  
 i_t_deg   = x(3);
 delta_e_deg = 0;
 delta_a_deg = x(5);
@@ -24,8 +24,7 @@ X = [
     0            % y [m]
 ];
 
-delta1 = delta_c;
-delta2 = delta_c;
+delta2 = 0.15;
 
 U = [
     delta1

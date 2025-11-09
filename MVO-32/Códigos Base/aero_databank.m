@@ -1,4 +1,6 @@
-function [CD,CL,Cm,CY,Cl,Cn] = aero_databank(X,U)
+% tá correto
+
+function [CD, CY, CL, Cl, Cm, Cn] = aero_databank(X, U)
 
 global aircraft
 

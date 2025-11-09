@@ -20,8 +20,7 @@ options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10);
 
 %% Ex.2
 
-x_eq_0 = zeros(6,1);
-x_eq_0(1) = trim_par.V;    
+x_eq_0 = zeros(6,1);   
 x_eq = fsolve(@trim_function,x_eq_0,options,trim_par);
 [~,X_eq,U_eq,Y_eq] = trim_function(x_eq,trim_par);
 
@@ -59,120 +58,120 @@ fprintf('\n');
 
 %% Ex.3
 
+% 1) Obter ponto de equilíbrio (usa dynamics 6-DoF)
+%    trim_par: struct com V, h, gamma_deg, thetadot_deg_s
+x_eq_0 = zeros(12,1);                 % [V,alpha,q,theta,h,x,beta,phi,p,r,psi,y] (deg/deg/s conforme seu modelo)
+x_eq_0(1) = trim_par.V;               % chute inicial V
+[X_res, ~, ~, ~] = fsolve(@trim_function, x_eq_0, options, trim_par);
+[~, X_eq, U_eq, Y_eq] = trim_function(X_res, trim_par);
+
+% 2) Dimensões
+nX = length(X_eq);
+nU = length(U_eq);
+[~, Y_tmp] = dynamics(0, X_eq, U_eq);
+nY = length(Y_tmp);
+
+% 3) Deltas por unidade (evita misturar m, m/s, deg, deg/s e frações)
+%    Ajuste mínimos conforme sua escala
+delta_X = zeros(nX,1);
+% estados: [V, alpha, q, theta, h, x, beta, phi, p, r, psi, y]
+delta_X(1)  = max(1e-6, abs(X_eq(1))*1e-6);   % V [m/s]
+delta_X(2)  = 1e-4;                            % alpha [deg]
+delta_X(3)  = 1e-5;                            % q [deg/s]
+delta_X(4)  = 1e-4;                            % theta [deg]
+delta_X(5)  = max(1e-6, abs(X_eq(5))*1e-6);   % h [m]
+delta_X(6)  = 1e-3;                            % x [m]
+delta_X(7)  = 1e-4;                            % beta [deg]
+delta_X(8)  = 1e-4;                            % phi [deg]
+delta_X(9)  = 1e-5;                            % p [deg/s]
+delta_X(10) = 1e-5;                            % r [deg/s]
+delta_X(11) = 1e-4;                            % psi [deg]
+delta_X(12) = 1e-3;                            % y [m]
+
+% entradas U: [delta1, delta2, i_t, delta_e, delta_a, delta_r] (exemplo)
+delta_U = zeros(nU,1);
+delta_U(1) = 1e-4;   % throttle 1 (fração 0–1)
+delta_U(2) = 1e-4;   % throttle 2 (fração 0–1)
+delta_U(3) = 1e-4;   % i_t [deg]
+delta_U(4) = 1e-4;   % delta_e [deg]
+delta_U(5) = 1e-4;   % delta_a [deg]
+delta_U(6) = 1e-4;   % delta_r [deg]
+
+% 4) Matrizes A, B, C, D por diferenças centrais
+A = zeros(nX,nX);  B = zeros(nX,nU);
+C = zeros(nY,nX);  D = zeros(nY,nU);
+
+% A e C (variação em X)
+for j = 1:nX
+    dX = zeros(nX,1); dX(j) = delta_X(j);
+    [Xdot_p, Y_p] = dynamics(0, X_eq + dX, U_eq);
+    [Xdot_m, Y_m] = dynamics(0, X_eq - dX, U_eq);
+    A(:,j) = (Xdot_p - Xdot_m) / (2*delta_X(j));
+    C(:,j) = (Y_p     - Y_m)    / (2*delta_X(j));
+end
+
+% B e D (variação em U)
+for j = 1:nU
+    dU = zeros(nU,1); dU(j) = delta_U(j);
+    [Xdot_p, Y_p] = dynamics(0, X_eq, U_eq + dU);
+    [Xdot_m, Y_m] = dynamics(0, X_eq, U_eq - dU);
+    B(:,j) = (Xdot_p - Xdot_m) / (2*delta_U(j));
+    D(:,j) = (Y_p     - Y_m)    / (2*delta_U(j));
+end
+
+lin_output = struct('A',A,'B',B,'C',C,'D',D, ...
+                    'X_eq',X_eq,'U_eq',U_eq,'Y_eq',Y_eq, ...
+                    'delta_X',delta_X,'delta_U',delta_U);
+save lin_output.mat lin_output
+
+% 5) Autovalores e amortecimento/frequência natural
+[eigvec,eigmat] = eig(A);
+eigval = diag(eigmat);
+[~, idx] = sort(real(eigval), 'ascend');
+eigval = eigval(idx);
+eigvec = eigvec(:,idx);
+
 fprintf('\n----- EX.3 -----\n\n');
-
-% Pega o Xdot de equilíbrio (deve ser [0; 0; 0; ...])
-[Xdot_eq, ~] = dynamics(0, X_eq, U_eq);
-
-% Inicializa a matriz A (12x12)
-n_states = length(X_eq);
-A = zeros(n_states, n_states);
-
-% Define o tamanho da perturbação
-perturb = 1e-6; 
-
-% Loop para calcular cada coluna da Matriz A
-for j = 1:n_states
-    % Cria um vetor de perturbação
-    X_pert = X_eq;
-    
-    % Perturba o j-ésimo estado
-    X_pert(j) = X_pert(j) + perturb;
-    
-    % Calcula o Xdot com o estado perturbado
-    [Xdot_pert, ~] = dynamics(0, X_pert, U_eq);
-    
-    % Calcula a derivada (coluna da matriz A) por diferenças finitas
-    A_col = (Xdot_pert - Xdot_eq) / perturb;
-    
-    % Armazena a coluna na matriz A
-    A(:, j) = A_col;
-end
-
-% Calcula autovalores (D_eig) e autovetores (V_eig)
-[V_eig, D_eig] = eig(A);
-
-% extrai os autovalores da diagonal de D_eig
-eigvals = diag(D_eig);
-
-fprintf('--- Análise dos Modos Naturais ---\n');
-fprintf('%-20s | %-22s | %-12s | %-12s | %-10s\n', ...
-    'Modo (Identifique!)', 'Autovalor (lambda)', 'Amort. (zeta)', 'Freq. (wn)', 'T. Const (tau)');
-fprintf([repmat('-', 1, 84) '\n']);
-
-% Tolerância para identificar autovalores nulos ou pares
-tol = 1e-4; 
-processed_mask = false(n_states, 1); % Para marcar autovalores já processados
-
-for i = 1:n_states
-    if processed_mask(i)
-        continue; % Já foi processado como parte de um par
-    end
-    
-    lambda = eigvals(i);
-    
-    if abs(lambda) < tol
-        fprintf('%-20s | %-22s | %-12s | %-12s | %-10s\n', ...
-            'Modo Ignorável (x,y,psi)', sprintf('%+.4f', real(lambda)), 'N/A', 'N/A', 'Infinito');
-        processed_mask(i) = true;
-        
-    % Verifica se é um MODO REAL (Não-Oscilatório)
-    elseif abs(imag(lambda)) < tol
-        lambda = real(lambda); % Trata como puramente real
-        tau = -1 / lambda;
-        
-        % Determina estabilidade
-        if lambda > 0
-            status = '(Instável)';
-        else
-            status = '(Estável)';
-        end
-        
-        fprintf('%-20s | %-22s | %-12s | %-12s | %-10s\n', ...
-            'Modo Real', sprintf('%+.4f %s', lambda, status), 'N/A', 'N/A', sprintf('%.3f s', tau));
-        processed_mask(i) = true;
-
-    % Verifica se é um MODO COMPLEXO (Oscilatório)
-    else
-        % Tenta encontrar o par conjugado
-        conjugate_found = false;
-        for k = i+1:n_states
-            if abs(lambda - conj(eigvals(k))) < tol
-                processed_mask(k) = true; % Marca o par como processado
-                conjugate_found = true;
-                break;
-            end
-        end
-        
-        % Se encontrou o par (ou se for o primeiro do par), calcula métricas
-        if conjugate_found || ~processed_mask(i)
-            sigma = real(lambda);
-            omega_d = imag(lambda);
-            omega_n = abs(lambda);
-            zeta = -sigma / omega_n;
-            
-            % Determina estabilidade
-            if sigma > 0
-                status = '(Instável)';
-            else
-                status = '(Estável)';
-            end
-
-            fprintf('%-20s | %-22s | %-12s | %-12s | %-10s\n', ...
-                'Modo Oscilatório', ...
-                sprintf('%+.4f +/- %.4fj', sigma, abs(omega_d)), ...
-                sprintf('%.4f %s', zeta, status), ...
-                sprintf('%.4f rad/s', omega_n), ...
-                'N/A');
-            
-            processed_mask(i) = true;
-        end
-    end
-end
-fprintf('\n');
+damp(eigval)   % zeta e wn diretamente dos polos
 
 
 %% Ex.4
+
+x0 = [ X_eq(2); U_eq(1); U_eq(3); 0.0; 0.5; -1.0 ]; % chute: [alpha, δ1, i_t, δe, δa, δr]
+[x_sol, ~] = fsolve(@trim_function_failure, x0, options, trim_par);
+[~, X_eq_fail, U_eq_fail, Y_eq_fail] = trim_function_failure(x_sol, trim_par);
+
+fprintf('\n----- EX.4 -----\n\n');
+fprintf('   %-12s = %8.2f %s\n','V',X_eq_fail(1),'m/s');
+fprintf('   %-12s = %8.3f %s\n','alpha',X_eq_fail(2),'deg');
+fprintf('   %-12s = %8.3f %s\n','q',X_eq_fail(3),'deg/s');
+fprintf('   %-12s = %8.3f %s\n','theta',X_eq_fail(4),'deg');
+fprintf('   %-12s = %8.1f %s\n','h',X_eq_fail(5),'m');
+fprintf('   %-12s = %8.3f %s\n','beta',X_eq_fail(7),'deg');
+fprintf('   %-12s = %8.3f %s\n','phi',X_eq_fail(8),'deg');
+fprintf('   %-12s = %8.3f %s\n','p',X_eq_fail(9),'deg/s');
+fprintf('   %-12s = %8.3f %s\n','r',X_eq_fail(10),'deg/s');
+fprintf('\n');
+fprintf('   %-12s = %8.2f %s\n','delta1',U_eq_fail(1),'%');
+fprintf('   %-12s = %8.2f %s\n','delta2',U_eq_fail(2),'%');
+fprintf('   %-12s = %8.3f %s\n','i_t',U_eq_fail(3),'deg');
+fprintf('   %-12s = %8.3f %s\n','delta_e',U_eq_fail(4),'deg');
+fprintf('   %-12s = %8.3f %s\n','delta_a',U_eq_fail(5),'deg');
+fprintf('   %-12s = %8.3f %s\n','delta_r',U_eq_fail(6),'deg');
+fprintf('\n');
+fprintf('   %-12s = %8.3f %s\n','gamma',Y_eq_fail(1),'deg');
+fprintf('   %-12s = %8.1f %s\n','T1',Y_eq_fail(2),'N');
+fprintf('   %-12s = %8.1f %s\n','T2',Y_eq_fail(3),'N');
+fprintf('   %-12s = %8.3f %s\n','Mach',Y_eq_fail(4),'');
+fprintf('   %-12s = %8.4f %s\n','C_D',Y_eq_fail(5),'');
+fprintf('   %-12s = %8.4f %s\n','C_L',Y_eq_fail(6),'');
+fprintf('   %-12s = %8.4f %s\n','C_m',Y_eq_fail(7),'');
+fprintf('   %-12s = %8.4f %s\n','C_Y',Y_eq_fail(8),'');
+fprintf('   %-12s = %8.4f %s\n','C_l',Y_eq_fail(9),'');
+fprintf('   %-12s = %8.4f %s\n','C_n',Y_eq_fail(10),'');
+fprintf('   %-12s = %8.4f %s\n','rho',Y_eq_fail(11),'kg/m^3');
+fprintf('   %-12s = %8.1f %s\n','qbar',Y_eq_fail(12),'N/m^2');
+fprintf('\n');
 
 %% Ex.5
 
