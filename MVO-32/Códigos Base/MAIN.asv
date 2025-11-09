@@ -62,7 +62,7 @@ nX = length(X_eq);
 nU = length(U_eq);
 nY = length(Y_eq);
 
-lin_output = struct('A',zeros(nX,nX),...
+lin_output(1:3) = struct('A',zeros(nX,nX),...
     'B',zeros(nX,nU),...
     'C',zeros(nY,nX),...
     'D',zeros(nY,nU));
@@ -91,14 +91,14 @@ for j=1:nU
     D(:, j) = (Y_plus - Y_minus)/(2*dU(j));
 end
 
-lin_output.A = A;
-lin_output.B = B;
-lin_output.C = C;
-lin_output.D = D;
+lin_output(.A = A;
+lin_output(i_cond).B = B;
+lin_output(i_cond).C = C;
+lin_output(i_cond).D = D;
 
 % [eigvec,eigval] = eig(lin_output(3).A);
 sel_states = 1:5;
-[eigvec,eigval] = eig(lin_output.A(sel_states,sel_states));
+[eigvec,eigval] = eig(lin_output(3).A(sel_states,sel_states));
 eigval = diag(eigval);
 [eigval,i_sort] = sort(eigval);
 eigvec = eigvec(:,i_sort);
@@ -146,21 +146,63 @@ fprintf('\n');
 
 %% Ex.5
 
-X0 = X_eq;
-U0 = U_eq;
+X0    = X_eq;
+U_trim = U_eq;
 
-dt = 0.010;
-t_f = 30;
-T = 0:dt:t_f;
-[X,Y] = ode4xy(@simulate_flight,T,X0,U0);
-U = Y(:,end-4:end);
-Y = Y(:,1:end-5);
+t0 = 0.0;
+t1 = 1.0;          % início do primeiro pulso
+t2 = t1 + 2.5;     % fim do 1º pulso
+t3 = t2 + 2.5;     % fim do 2º pulso
+t_end = 30.0;
 
-plot_long
-plot_latdir
-plot_controls
-plot_path
-plot_outputs
+dDelta = 0.1;      % variação de throttle (fração 0–1)
+
+% Função "janela" [a,b): retorna 1 no intervalo, 0 fora
+seg = @(t,a,b) double((t >= a) & (t < b));
+
+% Offsets diferenciais diretamente como expressões (sem sub-funções)
+d1_off = @(t) (-dDelta)*seg(t,t1,t2) + (+dDelta)*seg(t,t2,t3);
+d2_off = @(t) (+dDelta)*seg(t,t1,t2) + (-dDelta)*seg(t,t2,t3);
+
+% Controles no tempo (com saturação 0..1)
+sat01 = @(x) min(1,max(0,x));
+u_of_t = @(t) [ ...
+    sat01(U_trim(1) + d1_off(t));  % delta1(t)
+    sat01(U_trim(2) + d2_off(t));  % delta2(t)
+    U_trim(3);                     % i_t
+    U_trim(4);                     % delta_e
+    U_trim(5);                     % delta_a
+    U_trim(6)                      % delta_r
+];
+
+% ODE wrapper
+odefun = @(t,X) dynamics(t, X, u_of_t(t));
+
+opts_ode = odeset('RelTol',1e-6,'AbsTol',1e-8);
+[T_traj, X_traj] = ode45(odefun, [t0 t_end], X0, opts_ode);
+
+% Reconstrói saídas e guarda U(t)
+n = numel(T_traj);
+Y_traj = zeros(n,12);
+U_traj = zeros(n,6);
+for i = 1:n
+    Ui = u_of_t(T_traj(i));
+    U_traj(i,:) = Ui(:).';
+    [~, Yi] = dynamics(T_traj(i), X_traj(i,:).', Ui);
+    Y_traj(i,:) = Yi(:).';
+end
+
+% Plots principais
+f = figure;
+subplot(3,1,1); plot(T_traj, X_traj(:,8)); grid on; xlabel('t [s]'); ylabel('\phi [deg]'); title('Rolamento');
+subplot(3,1,2); plot(T_traj, X_traj(:,9)); grid on; xlabel('t [s]'); ylabel('p [deg/s]'); title('Vel. de rolamento');
+subplot(3,1,3); plot(T_traj, X_traj(:,10)); grid on; xlabel('t [s]'); ylabel('r [deg/s]'); title('Vel. de guinada');
+savefig(f, "Ex5_fig1.fig");
+
+f = figure;
+subplot(2,1,1); plot(T_traj, X_traj(:,7)); grid on; xlabel('t [s]'); ylabel('\beta [deg]'); title('Sideslip');
+subplot(2,1,2); plot(T_traj, X_traj(:,3)); grid on; xlabel('t [s]'); ylabel('q [deg/s]'); title('Arfagem');
+savefig(f, "Ex5_fig2.fig");
 
 %% Ex.6
 
