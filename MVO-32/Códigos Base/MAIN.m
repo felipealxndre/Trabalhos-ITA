@@ -21,8 +21,8 @@ options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10);
 %% Ex.2
 
 x_eq_0 = zeros(6,1);   
-x_eq = fsolve(@trim_function,x_eq_0,options,trim_par);
-[~,X_eq,U_eq,Y_eq] = trim_function(x_eq,trim_par);
+x_eq = fsolve(@trim_function_Ex2,x_eq_0,options,trim_par);
+[~,X_eq,U_eq,Y_eq] = trim_function_Ex2(x_eq,trim_par);
 
 fprintf('\n----- EX.2 -----\n\n');
 fprintf('   %-12s = %8.2f %s\n','V',X_eq(1),'m/s');
@@ -97,7 +97,7 @@ lin_output.C = C;
 lin_output.D = D;
 
 % [eigvec,eigval] = eig(lin_output.A);
-sel_states = 1:5;
+sel_states = 1:10;
 [eigvec,eigval] = eig(lin_output.A(sel_states,sel_states));
 eigval = diag(eigval);
 [eigval,i_sort] = sort(eigval);
@@ -109,8 +109,8 @@ damp(eigval)
 %% Ex.4
 
 x0 = [ X_eq(2); U_eq(1); U_eq(3); 0.0; 0.5; -1.0 ]; % chute: [alpha, δ1, i_t, δe, δa, δr]
-[x_sol, ~] = fsolve(@trim_function_failure, x0, options, trim_par);
-[~, X_eq_fail, U_eq_fail, Y_eq_fail] = trim_function_failure(x_sol, trim_par);
+[x_sol, ~] = fsolve(@trim_function_Ex4, x0, options, trim_par);
+[~, X_eq_fail, U_eq_fail, Y_eq_fail] = trim_function_Ex4(x_sol, trim_par);
 
 fprintf('\n----- EX.4 -----\n\n');
 fprintf('   %-12s = %8.2f %s\n','V',X_eq_fail(1),'m/s');
@@ -164,6 +164,10 @@ plot_outputs
 
 %% Ex.6
 
+x_eq_0 = zeros(6,1);   
+x_eq = fsolve(@trim_function_Ex6,x_eq_0,options,trim_par);
+[~,X_eq,U_eq,Y_eq] = trim_function_Ex6(x_eq,trim_par);
+
 nX = length(X_eq);
 nU = length(U_eq);
 nY = length(Y_eq);
@@ -212,5 +216,5 @@ eigvec = eigvec(:,i_sort);
 fprintf('\n----- EX.6 -----\n\n');
 damp(eigval)
 
-
 %% Ex.7
+
