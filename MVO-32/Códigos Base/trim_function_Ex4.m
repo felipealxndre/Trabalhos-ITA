@@ -1,11 +1,10 @@
 function [f, X, U, Y] = trim_function_Ex4(x, trim_par)
 
 alpha_deg    = x(1);
-delta1       = x(2);   
-it_deg       = x(3);
-phi_deg      = x(4);    
-delta_a_deg  = x(5);
-delta_r_deg  = x(6);
+delta1 = min(x(2), 1);
+it_deg       = x(3);   
+delta_a_deg  = x(4);
+delta_r_deg  = x(5);
 
 delta2      = 0.15;     
 delta_e_deg = 0;
@@ -31,7 +30,6 @@ U = [ delta1; delta2; it_deg; delta_e_deg; delta_a_deg; delta_r_deg ];
 V_eq         = trim_par.V;
 gamma_deg_eq = 0;
 thetadot_sp  = 0;
-psidot_sp    = 0;
 hdot_eq      = V_eq * sind(gamma_deg_eq);   
 xdot_eq      = V_eq * cosd(gamma_deg_eq);   
 

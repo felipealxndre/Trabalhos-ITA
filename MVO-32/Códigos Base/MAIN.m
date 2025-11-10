@@ -8,13 +8,13 @@ create_aircraft;
 
 g = 9.80665;
 
-trim_par = struct('V',228.8138886191133,'h',11000,'gamma_deg',0,'thetadot_deg_s',0);
+trim_par = struct('V',228.8138886191133,'h',11000);
 
 options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10);
 
 %% Ex.2
 
-x_eq_0_Ex2 = zeros(6,1);
+x_eq_0_Ex2 = zeros(5,1);
 x_eq_Ex2 = fsolve(@trim_function_Ex2,x_eq_0_Ex2,options,trim_par);
 [~,X_eq_Ex2,U_eq_Ex2,Y_eq_Ex2] = trim_function_Ex2(x_eq_Ex2,trim_par);
 
@@ -29,8 +29,8 @@ fprintf('   %-12s = %8.3f %s\n','phi',X_eq_Ex2(8),'deg');
 fprintf('   %-12s = %8.3f %s\n','p',X_eq_Ex2(9),'deg/s');
 fprintf('   %-12s = %8.3f %s\n','r',X_eq_Ex2(10),'deg/s');
 fprintf('\n');
-fprintf('   %-12s = %8.2f %s\n','delta1',U_eq_Ex2(1),'%');
-fprintf('   %-12s = %8.2f %s\n','delta2',U_eq_Ex2(2),'%');
+fprintf('   %-12s = %8.2f %s\n','delta1',U_eq_Ex2(1),'');
+fprintf('   %-12s = %8.2f %s\n','delta2',U_eq_Ex2(2),'');
 fprintf('   %-12s = %8.3f %s\n','i_t',U_eq_Ex2(3),'deg');
 fprintf('   %-12s = %8.3f %s\n','delta_e',U_eq_Ex2(4),'deg');
 fprintf('   %-12s = %8.3f %s\n','delta_a',U_eq_Ex2(5),'deg');
@@ -95,7 +95,7 @@ damp(eigval_Ex3)
 
 %% Ex.4
 
-x0_Ex4 = [ X_eq_Ex2(2); U_eq_Ex2(1); U_eq_Ex2(3); 0.0; 0.5; -1.0 ];
+x0_Ex4 = zeros(5,1);
 [x_sol_Ex4, ~] = fsolve(@trim_function_Ex4, x0_Ex4, options, trim_par);
 [~, X_eq_Ex4, U_eq_Ex4, Y_eq_Ex4] = trim_function_Ex4(x_sol_Ex4, trim_par);
 
@@ -110,8 +110,8 @@ fprintf('   %-12s = %8.3f %s\n','phi',X_eq_Ex4(8),'deg');
 fprintf('   %-12s = %8.3f %s\n','p',X_eq_Ex4(9),'deg/s');
 fprintf('   %-12s = %8.3f %s\n','r',X_eq_Ex4(10),'deg/s');
 fprintf('\n');
-fprintf('   %-12s = %8.2f %s\n','delta1',U_eq_Ex4(1),'%');
-fprintf('   %-12s = %8.2f %s\n','delta2',U_eq_Ex4(2),'%');
+fprintf('   %-12s = %8.2f %s\n','delta1',U_eq_Ex4(1),'');
+fprintf('   %-12s = %8.2f %s\n','delta2',U_eq_Ex4(2),'');
 fprintf('   %-12s = %8.3f %s\n','i_t',U_eq_Ex4(3),'deg');
 fprintf('   %-12s = %8.3f %s\n','delta_e',U_eq_Ex4(4),'deg');
 fprintf('   %-12s = %8.3f %s\n','delta_a',U_eq_Ex4(5),'deg');
@@ -143,11 +143,11 @@ T_Ex5 = 0:dt_Ex5:t_f_Ex5;
 U_Ex5 = Y_Ex5(:,end-4:end);
 Y_Ex5 = Y_Ex5(:,1:end-5);
 
-plot_long
-plot_latdir
-plot_controls
-plot_path
-plot_outputs
+% plot_long
+% plot_latdir
+% plot_controls
+% plot_path
+% plot_outputs
 
 %% Ex.6
 
@@ -211,6 +211,34 @@ z   = -real(lam)/max(wn,eps);
 tau = -1/real(lam);
 fprintf('EX.6 roll: λ=% .4f%+.4fi, ωn=%.3f, ζ=%.3f, τ=%.6fs\n', real(lam), imag(lam), wn, z, tau);
 
+
+state_names = {'V','alpha','q','theta','h','x','beta','phi','p','r','psi','y'};
+
+[~, i_roll3] = max(abs(eigvec_Ex3(9,:)));
+v_roll3 = eigvec_Ex3(:, i_roll3);
+
+[~, i_roll6] = max(abs(eigvec_Ex6(9,:)));
+v_roll6 = eigvec_Ex6(:, i_roll6);
+
+if abs(v_roll3(9)) > 0
+    v_roll3 = v_roll3 / v_roll3(9);
+end
+
+if abs(v_roll6(9)) > 0
+    v_roll6 = v_roll6 / v_roll6(9);
+end
+
+sel = [7 8 9 10];
+
+fprintf('EX.3 roll eigenvector (normalizado com p=1):\n');
+for k = sel
+    fprintf('   %-6s : % .6e\n', state_names{k}, real(v_roll3(k)));
+end
+
+fprintf('EX.6 roll eigenvector (normalizado com p=1):\n');
+for k = sel
+    fprintf('   %-6s : % .6e\n', state_names{k}, real(v_roll6(k)));
+end
 
 
 %% Ex.7

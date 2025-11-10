@@ -1,16 +1,16 @@
 function [f, X, U, Y] = trim_function_Ex2(x, trim_par)
 
 alpha_deg    = x(1);
-delta_c      = x(2);     % δ1 = δ2 = δc (hipótese de simetria)
-it_deg       = x(3);
-delta_e_deg  = 0;       
-delta_a_deg  = x(5);
-delta_r_deg  = x(6);
+delta_c      = x(2);
+it_deg       = x(3);     
+delta_a_deg  = x(4);
+delta_r_deg  = x(5);
 
 V            = trim_par.V;
+h            = trim_par.h;
+
 theta_deg    = alpha_deg;   
 q_deg_s      = 0;
-h            = trim_par.h;
 beta_deg     = 0;
 phi_deg      = 0;
 p_deg_s      = 0;
@@ -24,6 +24,7 @@ X = [ V; alpha_deg; q_deg_s; theta_deg; ...
 
 delta1 = delta_c;
 delta2 = delta_c;
+delta_e_deg  = 0;  
 
 U = [ delta1; delta2; it_deg; delta_e_deg; delta_a_deg; delta_r_deg ];
 
@@ -31,13 +32,10 @@ U = [ delta1; delta2; it_deg; delta_e_deg; delta_a_deg; delta_r_deg ];
 
 V_eq         = trim_par.V;
 gamma_deg_eq = 0;
-thetadot_sp  = 0;
-psidot_sp    = 0;
 hdot_eq      = V_eq * sind(gamma_deg_eq); 
 xdot_eq      = V_eq * cosd(gamma_deg_eq);  
 
-f = [ Xdot(1:3);
-      Xdot(4)  - thetadot_sp;
+f = [ Xdot(1:4);
       Xdot(5)  - hdot_eq;
       Xdot(6)  - xdot_eq ];
 end

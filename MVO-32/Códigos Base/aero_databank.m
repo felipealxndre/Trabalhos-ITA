@@ -1,5 +1,3 @@
-% tá correto
-
 function [CD, CY, CL, Cl, Cm, Cn] = aero_databank(X, U)
 
 global aircraft
