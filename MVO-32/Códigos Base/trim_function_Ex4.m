@@ -2,9 +2,10 @@ function [f, X, U, Y] = trim_function_Ex4(x, trim_par)
 
 alpha_deg    = x(1);
 delta1 = min(x(2), 1);
-it_deg       = x(3);   
-delta_a_deg  = x(4);
-delta_r_deg  = x(5);
+it_deg       = x(3);  
+phi_deg      = x(4);
+delta_a_deg  = x(5);
+delta_r_deg  = x(6);
 
 delta2      = 0.15;     
 delta_e_deg = 0;
@@ -13,7 +14,7 @@ V            = trim_par.V;
 theta_deg    = alpha_deg;
 q_deg_s      = 0;
 h            = trim_par.h;
-beta_deg     = 0;       
+beta_deg     = 0; 
 p_deg_s      = 0;
 r_deg_s      = 0;
 psi_deg      = 0;
