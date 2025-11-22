@@ -3,7 +3,7 @@ import numpy as np
 # --- DADOS EXTRAÍDOS DOS CARTÕES DE VOO ---
 
 # Voo 1 (CG Dianteiro ~20.15%) - Fonte: Pág 11 do Cartão
-t_voo1_pulsos = np.array([0, 0.78, 2.2])
+t_voo1_pulsos = np.array([0, 2.2])
 n_picos_voo1_pulsos = 3
 
 t_voo1_doublet1 = np.array([0, 1])
@@ -13,10 +13,10 @@ t_voo1_doublet2 = np.array([0, 0.65])
 n_picos_voo1_doublet2 = 2
 
 # Voo 2 (CG Traseiro ~22.99%) - Fonte: Pág 13 do Cartão
-t_voo2_pulsos = np.array([0, 0.89, 1.94])
+t_voo2_pulsos = np.array([0, 1.94])
 n_picos_voo2_pulsos = 3
 
-t_voo2_doublet = np.array([0, 2.21, 3.58])
+t_voo2_doublet = np.array([0, 3.58])
 n_picos_voo2_doublet = 3
 
 # --- CÁLCULOS ---
@@ -24,7 +24,7 @@ n_picos_voo2_doublet = 3
 
 def analisar_dinamica(tempos, n_picos):
 
-    Td = (tempos[n_picos - 1] - tempos[0])/(n_picos - 1)
+    Td = (tempos[1] - tempos[0])
 
     wd = (2 * np.pi) / Td
 
