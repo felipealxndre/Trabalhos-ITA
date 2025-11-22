@@ -22,7 +22,7 @@ def analisar_dinamica(tempos, n_picos):
 
     n_ciclos = max(1, n_picos - 1)
 
-    Td = (tempos[1] - tempos[0])
+    Td = 2*(tempos[1] - tempos[0])/n_ciclos
 
     wd = (2 * np.pi) / Td
 
