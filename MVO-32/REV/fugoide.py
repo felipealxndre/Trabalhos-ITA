@@ -12,8 +12,6 @@ t_voo2 = np.array([0, 21.9, 45.1, 60+10.05, 60+37.3, 120+6.5, 120+28.3])
 Vi_voo2 = np.array([190, 170, 185, 175, 182, 176, 180])
 Zpi_voo2 = np.array([15250, 15500, 15200, 15450, 15300, 15400, 15300])
 
-# --- CÁLCULOS ---
-
 
 def analisar_dinamica(tempos, amplitudes, n_picos):
     # Cálculo do decremento logarítmico
@@ -22,7 +20,7 @@ def analisar_dinamica(tempos, amplitudes, n_picos):
     delta = (1/n_picos) * np.log(A1/An)
 
     # Cálculo do coeficiente de amortecimento
-    zeta = 1/np.sqrt(1 + (2*np.pi/delta))
+    zeta = 1/np.sqrt(1 + (2*np.pi/delta)**2)
 
     # Cálculo do período experimental
     T = (tempos[-2] - tempos[1])/n_picos
@@ -36,19 +34,18 @@ def analisar_dinamica(tempos, amplitudes, n_picos):
 T1, wn1, zeta1 = analisar_dinamica(t_voo1, Vi_voo1, n_picos=2)
 T2, wn2, zeta2 = analisar_dinamica(t_voo2, Vi_voo2, n_picos=2)
 
-# --- OUTPUT ---
 print("-" * 40)
 print("ANÁLISE EXPERIMENTAL - FUGÓIDE")
 print("-" * 40)
 print(f"VOO 1 (CG Dianteiro):")
 print("-" * 40)
 print(f"  Tempos entre picos: {T1:.2f} s")
-print(f"  Frequência Natural (wn): {wn1:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta1:.2f}")
+print(f"  Frequência Natural (wn): {wn1:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1:.4f}")
 print("-" * 40)
 print(f"VOO 2 (CG Traseiro):")
 print("-" * 40)
 print(f"  Tempos entre picos: {T2:.2f} s")
-print(f"  Frequência Natural (wn): {wn2:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta2:.2f}")
+print(f"  Frequência Natural (wn): {wn2:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta2:.4f}")
 print("-" * 40)

@@ -19,8 +19,6 @@ n_picos_voo2_pulsos = 3
 t_voo2_doublet = np.array([0, 3.58])
 n_picos_voo2_doublet = 3
 
-# --- CÁLCULOS ---
-
 
 def analisar_dinamica(tempos, n_picos):
 
@@ -46,7 +44,6 @@ Td2_pulsos, wn2_pulsos, zeta2_pulsos = analisar_dinamica(
 Td2_doublet, wn2_doublet, zeta2_doublet = analisar_dinamica(
     t_voo2_doublet, n_picos_voo2_doublet)
 
-# --- OUTPUT ---
 print("-" * 40)
 print("ANÁLISE EXPERIMENTAL - CURTO PERÍODO")
 print("-" * 40)
@@ -54,28 +51,28 @@ print(f"VOO 1 (CG Dianteiro):")
 print("-" * 40)
 print("Pulsos")
 print(f"  Tempos entre picos: {Td1_pulsos:.2f} s")
-print(f"  Frequência Natural (wn): {wn1_pulsos:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta1_pulsos:.2f}")
+print(f"  Frequência Natural (wn): {wn1_pulsos:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1_pulsos:.4f}")
 print("-" * 40)
 print("Doublet 1")
 print(f"  Tempos entre picos: {Td1_doublet1:.2f} s")
-print(f"  Frequência Natural (wn): {wn1_doublet1:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta1_doublet1:.2f}")
+print(f"  Frequência Natural (wn): {wn1_doublet1:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1_doublet1:.4f}")
 print("-" * 40)
 print("Doublet 2")
 print(f"  Tempos entre picos: {Td1_doublet2:.2f} s")
-print(f"  Frequência Natural (wn): {wn1_doublet2:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta1_doublet2:.2f}")
+print(f"  Frequência Natural (wn): {wn1_doublet2:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1_doublet2:.4f}")
 print("-" * 40)
 print(f"VOO 2 (CG Traseiro):")
 print("-" * 40)
 print("Pulsos")
 print(f"  Tempos entre picos: {Td2_pulsos:.2f} s")
-print(f"  Frequência Natural (wn): {wn2_pulsos:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta2_pulsos:.2f}")
+print(f"  Frequência Natural (wn): {wn2_pulsos:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta2_pulsos:.4f}")
 print("-" * 40)
 print("Doublet")
 print(f"  Tempos entre picos: {Td2_doublet:.2f} s")
-print(f"  Frequência Natural (wn): {wn2_doublet:.2f} rad/s")
-print(f"  Amortecimento Est. (zeta): {zeta2_doublet:.2f}")
+print(f"  Frequência Natural (wn): {wn2_doublet:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta2_doublet:.4f}")
 print("-" * 40)
