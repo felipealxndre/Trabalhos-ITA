@@ -2,45 +2,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 # Posições de CG (% CMA)
-h_cg1 = 0.2015  # Voo 1 (CG Dianteiro)
-h_cg2 = 0.2299  # Voo 2 (CG Traseiro)
+h_cg1 = 0.2015
+h_cg2 = 0.2299
 
 # DADOS MANCHE FIXO (Pontos Estabilizados)
-# Voo 1
-Vi_stab1 = np.array([130, 140, 150, 160, 170, 180]) # nós (kt)
-de_stab1 = np.array([27.05, 26.65, 26.10, 25.60, 25.30, 25.00]) # cm
+Vi_stab1 = np.array([130, 140, 150, 160, 170, 180])
+de_stab1 = np.array([27.05, 26.65, 26.10, 25.60, 25.30, 25.00])
 
-# Voo 2
-Vi_stab2 = np.array([130, 140, 150, 160, 170, 180]) # nós
-de_stab2 = np.array([27.10, 26.60, 26.20, 25.70, 25.40, 25.00]) # cm
+Vi_stab2 = np.array([130, 140, 150, 160, 170, 180])
+de_stab2 = np.array([27.10, 26.60, 26.20, 25.70, 25.40, 25.00])
 
 # DADOS MANCHE LIVRE (Aceleração - Método Extra 1)
-# Voo 1 (Trimado a 180kt)
-Vi_acc1 = np.array([180, 190, 200, 210, 220]) # nós
-Fs_acc1 = np.array([0, -4, -9, -14, -23])     # kgf
+Vi_acc1 = np.array([180, 190, 200, 210, 220])
+Fs_acc1 = np.array([0, -4, -9, -14, -23])
 
-# Voo 2 (Trimado a 180kt)
-Vi_acc2 = np.array([180, 190, 200, 210, 220]) # nós
-Fs_acc2 = np.array([0, -5, -9, -15, -24])     # kgf
+Vi_acc2 = np.array([180, 190, 200, 210, 220])
+Fs_acc2 = np.array([0, -5, -9, -15, -24])
 
-# Parâmetros Atmosféricos e Geométricos
-rho0 = 1.225        # Densidade ao nível do mar (kg/m3)
-sigma = 0.57        # Razão de densidade aprox. para FL180
-S = 39.43           # Área da asa (m2)
-W_kgf = 10800       # Peso médio estimado (kgf)
+rho0 = 1.225
+sigma = 0.57
+S = 39.43
+W_kgf = 10800
 W1 = 11150 * 9.81
 W2 = 10450 * 9.81
 
-# Conversão de Velocidade (Indicated -> True Airspeed aprox.)
-# V_TAS = V_IAS / sqrt(sigma)
 kt_to_ms = 0.514444
 V_tas1 = (Vi_stab1 / np.sqrt(sigma)) * kt_to_ms
 V_tas2 = (Vi_stab2 / np.sqrt(sigma)) * kt_to_ms
 
-# Cálculo do Coeficiente de Sustentação (CL)
-# L = W = 0.5 * rho * V^2 * S * CL  ->  CL = W / (q * S)
 q1 = 0.5 * (rho0 * sigma) * V_tas1**2
 q2 = 0.5 * (rho0 * sigma) * V_tas2**2
 
@@ -48,32 +38,21 @@ CL1 = W1 / (q1 * S)
 CL2 = W2 / (q2 * S)
 
 # A) Manche Fixo (Gradiente d(delta_e)/dCL)
-# Regressão Linear (polinômio grau 1)
 slope_fixo1, intercept_fixo1 = np.polyfit(CL1, de_stab1, 1)
 slope_fixo2, intercept_fixo2 = np.polyfit(CL2, de_stab2, 1)
 
-# Cálculo do Ponto Neutro (Manche Fixo) - Fórmula do PDF
-# hn = (h1*grad1 - h2*grad2) / (grad1 - grad2)
 hn_fixo = (h_cg1 * slope_fixo1 - h_cg2 * slope_fixo2) / (slope_fixo1 - slope_fixo2)
-
-# Margens Estáticas (Manche Fixo)
 SM_fixo1 = hn_fixo - h_cg1
 SM_fixo2 = hn_fixo - h_cg2
 
 # B) Manche Livre (Gradiente dFs/dV)
-# Regressão Linear Força vs Velocidade
 slope_livre1, intercept_livre1 = np.polyfit(Vi_acc1, Fs_acc1, 1)
 slope_livre2, intercept_livre2 = np.polyfit(Vi_acc2, Fs_acc2, 1)
 
-# Cálculo do Ponto Neutro (Manche Livre) - Método Extra 1
-# hn' = (grad1*h2 - grad2*h1) / (grad1 - grad2)
 hn_livre = (slope_livre1 * h_cg2 - slope_livre2 * h_cg1) / (slope_livre1 - slope_livre2)
-
-# Margens Estáticas (Manche Livre)
 SM_livre1 = hn_livre - h_cg1
 SM_livre2 = hn_livre - h_cg2
 
-# --- 4. EXIBIÇÃO DOS RESULTADOS ---
 print("-" * 40)
 print("RESULTADOS DE ESTABILIDADE ESTÁTICA")
 print("-" * 40)
@@ -91,17 +70,13 @@ print(f"Gradiente Força Voo 1: {slope_livre1:.3f} kgf/kt")
 print(f"Gradiente Força Voo 2: {slope_livre2:.3f} kgf/kt")
 print("-" * 40)
 
-
-# Estilo dos gráficos
 palette = sns.color_palette("Set2", n_colors=2)
 plt.rcParams['font.family'] = 'Segoe UI'
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-# Gráfico 1: Manche Fixo (Posição vs CL)
 ax1.plot(CL1, de_stab1, 'o-', label=f'Voo 1 (CG {h_cg1*100:.2f}%)', color=palette[0])
 ax1.plot(CL2, de_stab2, 's-', label=f'Voo 2 (CG {h_cg2*100:.2f}%)', color=palette[1])
-# Ajuste linear para visualização
 x_fit = np.linspace(0.4, 1.1, 10)
 # ax1.plot(x_fit, slope_fixo1*x_fit + intercept_fixo1, '--', alpha=0.5, color=palette[0])
 # ax1.plot(x_fit, slope_fixo2*x_fit + intercept_fixo2, '--', alpha=0.5, color=palette[1])
@@ -109,8 +84,8 @@ x_fit = np.linspace(0.4, 1.1, 10)
 ax1.set_title('Estabilidade Estática Longitudinal (Manche Fixo)')
 ax1.set_xlabel('Coeficiente de Sustentação ($C_L$)', fontsize=13)
 ax1.set_ylabel('Posição do Manche $\delta_e$ (cm)', fontsize=13)
-ax1.invert_xaxis() # Inverter eixo X (CL aumenta para esquerda = menor velocidade)
-ax1.invert_yaxis() # Inverter eixo Y (Manche para trás = valores menores/maiores dependendo da ref, mas usualmente plotamos "pull" para cima)
+ax1.invert_xaxis()
+ax1.invert_yaxis()
 ax1.grid(axis='y', linestyle='--', linewidth=0.8, alpha=0.6)
 ax1.grid(axis='x')
 ax1.legend()
@@ -119,10 +94,8 @@ for spine in ax1.spines.values():
     spine.set_color('gray')
     spine.set_linewidth(1)
 
-# Gráfico 2: Manche Livre (Força vs Velocidade)
 ax2.plot(Vi_acc1, Fs_acc1, 'o-', label=f'Voo 1 (CG {h_cg1*100:.2f}%)', color=palette[0])
 ax2.plot(Vi_acc2, Fs_acc2, 's-', label=f'Voo 2 (CG {h_cg2*100:.2f}%)', color=palette[1])
-# Ajuste linear
 v_fit = np.linspace(180, 220, 10)
 # ax2.plot(v_fit, slope_livre1*v_fit + intercept_livre1, '--', alpha=0.5, color=palette[0])
 # ax2.plot(v_fit, slope_livre2*v_fit + intercept_livre2, '--', alpha=0.5, color=palette[1])
