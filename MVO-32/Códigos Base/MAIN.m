@@ -95,10 +95,26 @@ damp(eigval_Ex3)
 
 %% Ex.4
 
-x0_Ex4 = zeros(5,1);
+x0_Ex4 = [
+    X_eq_Ex2(1);    % V
+    X_eq_Ex2(2);    % alpha
+    0;              % q
+    X_eq_Ex2(4);    % theta
+    0;              % phi
+    0;              % p
+    0;              % r
+    0;              % psi
+    U_eq_Ex2(1);    % delta_1
+    U_eq_Ex2(3);    % i_t
+    0;              % delta_a
+    0               % delta_r
+];
+
+% Aumentar 'MaxFunEvals' e 'MaxIter' para dar fôlego ao otimizador 12x12
+options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10, 'MaxFunEvals', 10000, 'MaxIter', 1000);
+
 [x_sol_Ex4, ~] = fsolve(@trim_function_Ex4, x0_Ex4, options, trim_par);
 [~, X_eq_Ex4, U_eq_Ex4, Y_eq_Ex4] = trim_function_Ex4(x_sol_Ex4, trim_par);
-
 fprintf('\n----- EX.4 -----\n\n');
 fprintf('   %-12s = %8.2f %s\n','V',X_eq_Ex4(1),'m/s');
 fprintf('   %-12s = %8.3f %s\n','alpha',X_eq_Ex4(2),'deg');
