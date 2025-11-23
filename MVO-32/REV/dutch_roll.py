@@ -26,7 +26,7 @@ def analisar_dinamica(tempos, n_picos):
 
     wd = (2 * np.pi) / Td
 
-    n_picos = np.floor(n_picos/2)
+    n_picos = np.ceil(n_picos/2)
     zeta = (7 - n_picos) / 10.0
 
     wn = wd / np.sqrt(1 - zeta**2)
