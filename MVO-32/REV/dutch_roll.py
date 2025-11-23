@@ -26,12 +26,8 @@ def analisar_dinamica(tempos, n_picos):
 
     wd = (2 * np.pi) / Td
 
-    # CÁLCULO DO ZETA
-    if n_picos <= 6:
-        zeta = (7 - n_picos) / 10.0
-    else:
-        delta = np.log(20) / n_ciclos
-        zeta = delta / np.sqrt(4 * np.pi**2 + delta**2)
+    n_picos = np.floor(n_picos/2)
+    zeta = (7 - n_picos) / 10.0
 
     wn = wd / np.sqrt(1 - zeta**2)
 
