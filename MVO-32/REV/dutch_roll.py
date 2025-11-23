@@ -3,17 +3,17 @@ import numpy as np
 # --- DADOS EXTRAÍDOS DOS CARTÕES DE VOO ---
 # Voo 1 (CG Dianteiro)
 t_voo1_yaw_dumper_on = np.array([0, 3.1])
-n_picos_voo1_yaw_dumper_on = 1.5
+n_picos_voo1_yaw_dumper_on = 3
 
 t_voo1_yaw_dumper_off = np.array([0, 13])
-n_picos_voo1_yaw_dumper_off = 5
+n_picos_voo1_yaw_dumper_off = 10
 
 # Voo 2 (CG Traseiro)
 t_voo2_yaw_dumper_on = np.array([0, 2.81])
-n_picos_voo2_yaw_dumper_on = 1.5
+n_picos_voo2_yaw_dumper_on = 3
 
 t_voo2_yaw_dumper_off = np.array([0, 9.09])
-n_picos_voo2_yaw_dumper_off = 3.5
+n_picos_voo2_yaw_dumper_off = 7
 
 # --- CÁLCULOS ---
 
@@ -26,7 +26,12 @@ def analisar_dinamica(tempos, n_picos):
 
     wd = (2 * np.pi) / Td
 
-    zeta = (7 - n_picos) / 10.0
+    # CÁLCULO DO ZETA
+    if n_picos <= 6:
+        zeta = (7 - n_picos) / 10.0
+    else:
+        delta = np.log(20) / n_ciclos
+        zeta = delta / np.sqrt(4 * np.pi**2 + delta**2)
 
     wn = wd / np.sqrt(1 - zeta**2)
 
