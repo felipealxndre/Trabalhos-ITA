@@ -4,20 +4,20 @@ import numpy as np
 
 # Voo 1 (CG Dianteiro ~20.15%) - Fonte: Pág 11 do Cartão
 t_voo1_pulsos = np.array([0, 2.2])
-n_picos_voo1_pulsos = 3
+n_picos_voo1_pulsos = 1.5
 
 t_voo1_doublet1 = np.array([0, 1])
-n_picos_voo1_doublet1 = 2
+n_picos_voo1_doublet1 = 1
 
 t_voo1_doublet2 = np.array([0, 0.65])
-n_picos_voo1_doublet2 = 2
+n_picos_voo1_doublet2 = 1
 
 # Voo 2 (CG Traseiro ~22.99%) - Fonte: Pág 13 do Cartão
 t_voo2_pulsos = np.array([0, 1.94])
-n_picos_voo2_pulsos = 3
+n_picos_voo2_pulsos = 1.5
 
 t_voo2_doublet = np.array([0, 3.58])
-n_picos_voo2_doublet = 3
+n_picos_voo2_doublet = 1.5
 
 
 def analisar_dinamica(tempos, n_picos):
