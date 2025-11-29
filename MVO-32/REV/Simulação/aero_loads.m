@@ -18,7 +18,7 @@ b = aircraft.b;
 
 F_aero_a = q_bar*S*[-CD; -CY; -CL];
 
-C_mbeta = DCM(3, -beta_deg*pi/180); %rotacao de -beta
+C_mbeta = DCM(3, -beta_deg*pi/180);
 C_alpha = DCM(2, alpha_deg*pi/180);
 
 C_ba = C_alpha*C_mbeta;

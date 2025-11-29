@@ -1,84 +1,78 @@
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.signal import find_peaks
 
-# 1. CARREGAMENTO E PREPARAÇÃO
-file_path = 'C:\\Users\\fealp\\OneDrive\\Documentos\\ITA\\Trabalhos\\MVO-32\\REV\\v5_20251008_085011_105m.csv'
-df = pd.read_csv(file_path)
 
-# Ajustar Tempo
-df['Timestamp'] = pd.to_datetime(df['Timestamp'], format='%d-%b-%Y %H:%M:%S.%f')
-df['Time_s'] = (df['Timestamp'] - df['Timestamp'].iloc[0]).dt.total_seconds()
+t_voo1_pulsos = np.array([0, 2.2])
+n_picos_voo1_pulsos = 3
 
-# 2. RECORTE DO TEMPO (Zoom na manobra)
-# Intervalo identificado anteriormente como provável Curto Período
-t_start = 0
-t_end = 5000
+t_voo1_doublet1 = np.array([0, 1])
+n_picos_voo1_doublet1 = 2
 
-mask = (df['Time_s'] >= t_start) & (df['Time_s'] <= t_end)
-df_short = df.loc[mask].copy()
+t_voo1_doublet2 = np.array([0, 0.65])
+n_picos_voo1_doublet2 = 2
 
-# Variável de Interesse: Taxa de Arfagem q (Giroscópio X)
-time = df_short['Time_s'].values
-q = df_short['gyroY(rad/s)'].values
-pitch = df_short['Pitch(rads)'].values
+t_voo2_pulsos = np.array([0, 1.94])
+n_picos_voo2_pulsos = 3
 
-# 3. ANÁLISE DE PICOS (Identificação da Dinâmica)
-# Encontrar picos positivos e negativos (vales) para medir o período
-# Ajuste 'prominence' se necessário para filtrar ruído
-peaks, _ = find_peaks(q, prominence=0.02)
-valleys, _ = find_peaks(-q, prominence=0.02)
+t_voo2_doublet = np.array([0, 3.58])
+n_picos_voo2_doublet = 3
 
-# 4. PLOTAGEM
 
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 9), sharex=True)
+def analisar_dinamica(tempos, n_picos):
 
-# Subplot 1: Taxa de arfagem q
-ax1.plot(time, q, 'b-', linewidth=1.5, label='Taxa de Arfagem ($q$)')
-ax1.plot(time[peaks], q[peaks], 'rx', markersize=10, label='Picos')
-ax1.plot(time[valleys], q[valleys], 'go', markersize=8, label='Vales')
-ax1.set_ylabel('Taxa de Arfagem $q$ [rad/s]', fontsize=12)
-ax1.axhline(0, color='black', linewidth=0.8, linestyle='--')
-ax1.legend()
-ax1.grid(True, which='both', linestyle='--', alpha=0.7)
-ax1.set_title(f'Análise de Curto Período (Intervalo {t_start}-{t_end}s)', fontsize=14)
-ax1.minorticks_on()
+    n_ciclos = max(1, n_picos - 1)
 
-# Subplot 2: Pitch
-ax2.plot(time, pitch, 'm-', linewidth=1.2, label='Pitch (rad)')
-ax2.set_xlabel('Tempo [s]', fontsize=12)
-ax2.set_ylabel('Pitch [rad]', fontsize=12)
-ax2.axhline(0, color='black', linewidth=0.8, linestyle='--')
-ax2.legend()
-ax2.grid(True, which='both', linestyle='--', alpha=0.7)
-ax2.minorticks_on()
+    Td = 2*(tempos[1] - tempos[0])/n_ciclos
 
-plt.tight_layout()
-plt.show()
+    wd = (2 * np.pi) / Td
 
-# 5. CÁLCULO DOS PARÂMETROS
-print("--- RESULTADOS DA ANÁLISE ---")
-if len(peaks) >= 2:
-    # Calcular período médio entre picos consecutivos
-    diff_peaks = np.diff(time[peaks])
-    Td_medio = np.mean(diff_peaks)
-    wn = (2 * np.pi) / Td_medio
-    
-    print(f"Picos detectados nos instantes: {time[peaks]}")
-    print(f"Período Amortecido Médio (Td): {Td_medio:.3f} s")
-    print(f"Frequência Natural Estimada (wn): {wn:.3f} rad/s")
-    
-    # Estimativa de Amortecimento (Decremento Logarítmico)
-    # Usando o primeiro e segundo pico (se houver decaimento claro)
-    if q[peaks][0] > q[peaks][1]:
-        delta = np.log(q[peaks][0] / q[peaks][1])
-        zeta = delta / np.sqrt(4 * np.pi**2 + delta**2)
-        print(f"Amortecimento Estimado (Decremento Log): {zeta:.3f}")
-    else:
-        print("Amortecimento: Não foi possível calcular (picos não decrescentes ou ruído).")
-        
-else:
-    print("Não foram detectados picos suficientes para cálculo automático.")
-    print("Tente ajustar o intervalo de tempo ou a proeminência dos picos.")
+    n_picos = np.ceil(n_picos/2)
+    zeta = (7 - n_picos) / 10.0
 
+    wn = wd / np.sqrt(1 - zeta**2)
+
+    return Td, wn, zeta
+
+
+Td1_pulsos, wn1_pulsos, zeta1_pulsos = analisar_dinamica(
+    t_voo1_pulsos, n_picos_voo1_pulsos)
+Td1_doublet1, wn1_doublet1, zeta1_doublet1 = analisar_dinamica(
+    t_voo1_doublet1, n_picos_voo1_doublet1)
+Td1_doublet2, wn1_doublet2, zeta1_doublet2 = analisar_dinamica(
+    t_voo1_doublet2, n_picos_voo1_doublet2)
+Td2_pulsos, wn2_pulsos, zeta2_pulsos = analisar_dinamica(
+    t_voo2_pulsos, n_picos_voo2_pulsos)
+Td2_doublet, wn2_doublet, zeta2_doublet = analisar_dinamica(
+    t_voo2_doublet, n_picos_voo2_doublet)
+
+print("-" * 40)
+print("ANÁLISE EXPERIMENTAL - CURTO PERÍODO")
+print("-" * 40)
+print(f"VOO 1 (CG Dianteiro):")
+print("-" * 40)
+print("Pulsos")
+print(f"  Tempos entre picos: {Td1_pulsos:.2f} s")
+print(f"  Frequência Natural (wn): {wn1_pulsos:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1_pulsos:.4f}")
+print("-" * 40)
+print("Doublet 1")
+print(f"  Tempos entre picos: {Td1_doublet1:.2f} s")
+print(f"  Frequência Natural (wn): {wn1_doublet1:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1_doublet1:.4f}")
+print("-" * 40)
+print("Doublet 2")
+print(f"  Tempos entre picos: {Td1_doublet2:.2f} s")
+print(f"  Frequência Natural (wn): {wn1_doublet2:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta1_doublet2:.4f}")
+print("-" * 40)
+print(f"VOO 2 (CG Traseiro):")
+print("-" * 40)
+print("Pulsos")
+print(f"  Tempos entre picos: {Td2_pulsos:.2f} s")
+print(f"  Frequência Natural (wn): {wn2_pulsos:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta2_pulsos:.4f}")
+print("-" * 40)
+print("Doublet")
+print(f"  Tempos entre picos: {Td2_doublet:.2f} s")
+print(f"  Frequência Natural (wn): {wn2_doublet:.4f} rad/s")
+print(f"  Amortecimento Est. (zeta): {zeta2_doublet:.4f}")
+print("-" * 40)

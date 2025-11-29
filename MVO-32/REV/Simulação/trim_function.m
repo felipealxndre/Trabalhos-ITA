@@ -7,7 +7,7 @@ function [f, X, U, Y] = trim_function(x, trim_par, i_cond)
 % x(11): Delta_a
 % x(12): Delta_r
 
-% Dornier 328 não tem estabilizador móvel (trimável) no modelo fornecido
+% Dornier 328 não tem estabilizador móvel (trimável)
 beta_deg_eq = 0;
 
 X = [
@@ -19,7 +19,7 @@ X = [
     0
     ];
 
-% Montagem do Vetor de Controle U (4 elementos)
+% Montagem do Vetor de Controle U
 U = [
     x(9)      % Throttle
     x(10)     % delta_e (Profundor)
@@ -35,7 +35,7 @@ ydot_deg_eq = 0;
 hdot_eq = V_eq*sind(gamma_deg_eq);
 xdot_eq = V_eq*cosd(gamma_deg_eq);
 
-% Resíduos para o fsolve zerar
+
 f = [
     Xdot(1:3)
     Xdot(4) - trim_par(i_cond).thetadot_deg_s

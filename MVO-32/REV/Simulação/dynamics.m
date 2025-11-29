@@ -8,20 +8,12 @@ alpha_deg = X(2);
 q_deg_s = X(3);
 theta_deg = X(4);
 h = X(5);
-%x = X(6);
 
 beta_deg = X(7);
 phi_deg = X(8);
 p_deg_s = X(9);
 r_deg_s = X(10);
 psi_deg = X(11);
-%y = X(12);
-
-% --- ATUALIZAÇÃO DE CONTROLES (Dornier 328) ---
-% throttle = U(1);
-% delta_e_deg = U(2);  % Profundor (Antes era i_t na pos 2)
-% delta_a_deg = U(3);
-% delta_r_deg = U(4);
 
 m = aircraft.m;
 
@@ -30,12 +22,10 @@ Iyy = aircraft.Iyy;
 Izz = aircraft.Izz;
 Ixz = aircraft.Ixz;
 
-
 C_psi = DCM(3, psi_deg * pi/180);
 C_theta = DCM(2, theta_deg * pi/180);
 C_phi = DCM(1, phi_deg * pi/180);
 
-% Matrizes de rotação
 C_bv = C_phi*C_theta*C_psi;
 C_vb = C_bv.';
 
@@ -58,7 +48,6 @@ r_rad_s = r_deg_s*pi/180;
 
 omega_b = [p_rad_s; q_rad_s; r_rad_s];
 
-% Tensor de inércia
 J_C_b = [
     Ixx 0 -Ixz
     0 Iyy 0
@@ -67,11 +56,9 @@ J_C_b = [
 g_v = [0; 0; g];
 g_b = C_bv*g_v;
 
-% Chamada das funções de forças e momentos
 [F_aero_b, M_aero_C_b] = aero_loads(X, U, i_cond);
 [F_prop_b, M_prop_C_b, T] = prop_loads(X, U);
 
-% Equações do movimento (Newton-Euler)
 V_b_dot = 1/m * (F_aero_b + F_prop_b) + g_b - skew(omega_b)*V_b;
 omega_b_dot = J_C_b \ (M_aero_C_b + M_prop_C_b - skew(omega_b)*J_C_b*omega_b);
 
@@ -94,14 +81,12 @@ rdot_deg_s_2 = rdot_rad_s_2*180/pi;
 alphadot_deg_s = alphadot_rad_s*180/pi;
 betadot_deg_s = betadot_rad_s*180/pi;
 
-% Cinemática Translacional
 V_i = C_vb * V_b;
 xdot = V_i(1);
 ydot = V_i(2);
 zdot = V_i(3);
 hdot = -zdot;
 
-% Cinemática Rotacional
 I_3 = eye(3);
 e_31 = I_3(:,1);
 e_32 = I_3(:,2);
@@ -133,7 +118,6 @@ Xdot = [
     ydot
     ];
 
-% Cálculo das saídas Y
 [CD,CY,CL,Cl,Cm,Cn] = aero_databank(X,U,i_cond);
 
 [rho,~,~,a] = ISA(h);
