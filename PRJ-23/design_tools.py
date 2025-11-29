@@ -11,7 +11,7 @@ kt2ms = 0.514444
 lb2N = 4.44822
 gravity = 9.81
 
-
+# USAR ESSE
 def my_aircraft():
     # Defining general geometric parameters
     wing = {'S':98.77,
