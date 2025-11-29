@@ -26,25 +26,47 @@ def my_aircraft():
     		'c_tank_c_w': 0.4,
     		'x_tank_c_w': 0.2}
     
-    EH  =  {'Cht':0.80,
-    		'AR':4.64,
-    		'taper':0.39,
-    		'sweep':26*np.pi/180,
-    		'dihedral':2*np.pi/180,
+    EH  =  {'Cht': 1.54,
+    		'AR':4.30,
+    		'taper':0.59,
+    		'sweep':24*np.pi/180,
+    		'dihedral':8*np.pi/180,
     		'Lc':4.83,
     		'zr':0.0,
     		'tcr': 0.1,
     		'tct': 0.1,
     		'eta': 1.0}
     
-    EV  =  {'Cvt':0.088,
-    		'AR':1.27,
-    		'taper':0.74,
-    		'sweep':41*np.pi/180,
+    EV  =  {'Cvt':0.12,
+    		'AR':1.89,
+    		'taper':0.41,
+    		'sweep':30*np.pi/180,
     		'Lb':0.55,
     		'zr':0.0,
     		'tcr': 0.1,
     		'tct': 0.1}
+
+
+
+    # EH  =  {'Cht':0.80,
+    # 		'AR':4.64,
+    # 		'taper':0.39,
+    # 		'sweep':26*np.pi/180,
+    # 		'dihedral':2*np.pi/180,
+    # 		'Lc':4.83,
+    # 		'zr':0.0,
+    # 		'tcr': 0.1,
+    # 		'tct': 0.1,
+    # 		'eta': 1.0}
+    
+    # EV  =  {'Cvt':0.088,
+    # 		'AR':1.27,
+    # 		'taper':0.74,
+    # 		'sweep':41*np.pi/180,
+    # 		'Lb':0.55,
+    # 		'zr':0.0,
+    # 		'tcr': 0.1,
+    # 		'tct': 0.1}
     
     geo_param = {'wing':wing,
      			 'EH':EH,
