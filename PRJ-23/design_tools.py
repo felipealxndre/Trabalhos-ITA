@@ -11,13 +11,13 @@ kt2ms = 0.514444
 lb2N = 4.44822
 gravity = 9.81
 
-
-def default_aircraft():
+# USAR ESSE
+def my_aircraft():
     # Defining general geometric parameters
-    wing = {'S':93.5,
-    		'AR':8.43,
+    wing = {'S':98.77,
+    		'AR':11.97,
     		'taper':0.235,
-    		'sweep':17.45*np.pi/180,
+    		'sweep':13.1780*np.pi/180,
     		'dihedral':5*np.pi/180,
     		'xr':13.5,
     		'zr':0.0,
@@ -26,7 +26,7 @@ def default_aircraft():
     		'c_tank_c_w': 0.4,
     		'x_tank_c_w': 0.2}
     
-    EH  =  {'Cht':0.94,
+    EH  =  {'Cht':0.80,
     		'AR':4.64,
     		'taper':0.39,
     		'sweep':26*np.pi/180,
@@ -101,9 +101,9 @@ def default_aircraft():
     
     aircraft['dimensions']['nacelle'] = nacelle
     
-    ldg = {'xnlg': 3.6,
-           'xmlg': 17.8,
-           'ymlg': 2.47,
+    ldg = {'xnlg': 1.0,
+           'xmlg': 15.42,
+           'ymlg': 4.11,
            'z': -2.0}
     
     aircraft['dimensions']['ldg'] = ldg
@@ -111,107 +111,103 @@ def default_aircraft():
     return(aircraft)
 
 
-def my_aircraft():
-    # Defining general geometric parameters
-    wing = {'S': 105.5, #Otimizado para fornecer tração mínima
-            'AR':10.2, #Otimizar no acompanhamento
-            'taper':0.3, #Dados históricos
-            'sweep':23*np.pi/180,  #Otimizar no acompanhamento
-            'dihedral':4*np.pi/180, #Carteado
-            'xr':11.6, #Posição da asa
-            'zr':-3.42/2, #Altura da asa
-            'tcr': 0.123,
-            'tct': 0.096,
-            'c_tank_c_w': 0.4,
-            'x_tank_c_w': 0.2}
-   
-    EH  =  {'Cht':1.1, #Carteado
-            'AR':3.5, #Carteado
-            'taper':0.4, #Carteado
-            'sweep':26*np.pi/180, #Fokker 100
-            'dihedral':0*np.pi/180, #Fokker 100
-            'Lc':3.6,
-            'zr':1.0318,
-            'tcr': 0.1,
-            'tct': 0.1,
-            'eta': 1.0}
-   
-    EV  =  {'Cvt':0.08, #Carteado
-            'AR':1.0, #Carteado
-            'taper':0.8, #Fokker 100
-            'sweep':41*np.pi/180, #Default
-            'Lb':0.38,
-            'zr':1.4968,
-            'tcr': 0.1,
-            'tct': 0.1}
-   
-    geo_param = {'wing':wing,
-                 'EH':EH,
-                 'EV':EV}
-   
-    aircraft = {'geo_param':geo_param}
-   
-    flap = {'max_def': 40 * np.pi/180,
-            'type': 'double slotted', #Carteado
-            'c_flap_c_wing': 1.3,
-            'b_flap_b_wing': 0.5,}
-   
-    slat = {'max_def': 0.523598775598298, #NÃO TEMOS
-            'type': 'slat',
-            'c_slat_c_wing': 1.05,
-            'b_slat_b_wing': 0.75}
-   
-    engines = {'n': 2,
-               'n_uw': 2,
-               'BPR': 5.0}
-   
-    misc = {'kexc': 0.03,
-            'rho_f': 804.0, #Densidade do combustível
-            'x_tailstrike': 23.68,
-            'z_tailstrike': -0.84,
-            'CLmax_airfoil': 2.3}
-   
-    # Valor original de payload: 8795 kg + 3900 kg de cargo -> Não decola.
-    # Valor modificado de payload: 8795 kg + 1900 kg de cargo -> Otimizado
-
-
-    weights = {'W_payload': 10695*9.81, # Passageiro + Cargo Mass
-               'xcg_payload': 14.0, # Posição do CG do payload estimado
-               'W_crew': 4*(80+20)*9.81, # Tripulantes + Bagagem
-               'xcg_crew': 2.5,
-               'per_xcg_allelse': 0.45}
-   
-    aircraft['weights'] = weights
-   
-    data = {'engines': engines,
-            'flap': flap,
-            'slat': slat,
-            'misc':misc}
-   
-    aircraft['data'] = data
-   
-    fus = {'Lf': 30.20, #Atualizado para a nossa aeronave
-           'Df': 3.42}  #Atualizado para a nossa aeronave
-   
-    aircraft['dimensions'] = {}
-    aircraft['dimensions']['fus'] = fus
-   
-    nacelle = {'Ln': 3.1, #Comprimento do CF34-8E
-               'Dn': 1.3, #Diâmetro do CF34-8E
-               'xn': 12.0, #cad
-               'yn': 4.2, #cad
-               'zn': -2.5192} #cad
-   
-    aircraft['dimensions']['nacelle'] = nacelle
-   
-    ldg = {'xnlg': 2.8,
-           'xmlg': 16.3,
-           'ymlg': 2.47,
-           'z': -3.67}
-   
-    aircraft['dimensions']['ldg'] = ldg
-       
-    return(aircraft)
+# def default_aircraft():
+#     # Defining general geometric parameters
+#     wing = {'S':93.5,
+#     		'AR':8.43,
+#     		'taper':0.235,
+#     		'sweep':17.45*np.pi/180,
+#     		'dihedral':5*np.pi/180,
+#     		'xr':13.5,
+#     		'zr':0.0,
+#     		'tcr': 0.123,
+#     		'tct': 0.096,
+#     		'c_tank_c_w': 0.4,
+#     		'x_tank_c_w': 0.2}
+    
+#     EH  =  {'Cht':0.94,
+#     		'AR':4.64,
+#     		'taper':0.39,
+#     		'sweep':26*np.pi/180,
+#     		'dihedral':2*np.pi/180,
+#     		'Lc':4.83,
+#     		'zr':0.0,
+#     		'tcr': 0.1,
+#     		'tct': 0.1,
+#     		'eta': 1.0}
+    
+#     EV  =  {'Cvt':0.088,
+#     		'AR':1.27,
+#     		'taper':0.74,
+#     		'sweep':41*np.pi/180,
+#     		'Lb':0.55,
+#     		'zr':0.0,
+#     		'tcr': 0.1,
+#     		'tct': 0.1}
+    
+#     geo_param = {'wing':wing,
+#      			 'EH':EH,
+#      			 'EV':EV}
+    
+#     aircraft = {'geo_param':geo_param}
+    
+#     flap = {'max_def': 0.6981317007977318,
+#     		'type': 'double slotted',
+#     		'c_flap_c_wing': 1.2,
+#     		'b_flap_b_wing': 0.6,}
+    
+#     slat = {'max_def': 0.0,
+#     		'type': 'slat',
+#     		'c_slat_c_wing': 1.05,
+#     		'b_slat_b_wing': 0.75}
+    
+#     engines = {'n': 2,
+#      		   'n_uw': 0,
+#                'BPR': 3.04}
+    
+#     misc = {'kexc': 0.03,
+#     		'rho_f': 804.0,
+#     		'x_tailstrike': 23.68,
+#     		'z_tailstrike': -0.84,
+#             'CLmax_airfoil': 2.3}
+    
+#     weights = {'W_payload': 95519.97000000000116,
+#                'xcg_payload': 14.4,
+#                'W_crew': 4463.55000000000018,
+#                'xcg_crew': 2.5,
+#                'per_xcg_allelse': 0.45}
+    
+#     aircraft['weights'] = weights
+    
+#     data = {'engines': engines,
+#     		'flap': flap,
+#     		'slat': slat,
+#     		'misc':misc}
+    
+#     aircraft['data'] = data
+    
+#     fus = {'Lf': 32.8,
+#            'Df': 3.3}
+    
+#     aircraft['dimensions'] = {}
+#     aircraft['dimensions']['fus'] = fus
+    
+#     nacelle = {'Ln': 4.3,
+#      		   'Dn': 1.5,
+#                'xn': 23.2,
+#                'yn': 3.01,
+#                'zn': 0.45}
+    
+#     aircraft['dimensions']['nacelle'] = nacelle
+    
+#     ldg = {'xnlg': 3.6,
+#            'xmlg': 17.8,
+#            'ymlg': 2.47,
+#            'z': -2.0}
+    
+#     aircraft['dimensions']['ldg'] = ldg
+        
+#     return(aircraft)
 
 #------------------------------------------------------------------------------
 def geometry(aircraft):
