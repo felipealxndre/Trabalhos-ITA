@@ -1,0 +1,72 @@
+=========================================
+OPTIMIZATION RESULTS
+ message: Optimization terminated successfully
+ success: True
+  status: 0
+     fun: 0.00488848678
+       x: [-5.000e-02 -2.031e-01 -1.065e-01 -5.000e-02  1.269e-01
+            1.365e-01  1.859e-01  1.815e-01  1.641e-02]
+     nit: 11
+     jac: [-1.351e-02  3.914e-03  5.983e-03  1.108e-02  5.887e-03
+            9.060e-03  9.786e-03  8.579e-03  9.366e-02]
+    nfev: 13
+    njev: 11
+Optimization time: 442 seconds
+=========================================
+
+Found previous solution
+ii: 12
+delta: 0.0
+Evaluating the following point
+Al: [-0.05       -0.20314275 -0.10647595 -0.05      ]
+Au: [0.12694442 0.13648835 0.18591317 0.18153676]
+alpha [deg]: 0.9403848319587892
+2D Grid generator
+Written by:
+Ney Rafael Secco
+ney@ita.br
+Jan 2016
+Rev: Aug 2022
+
+Growth ratio:  1.1404314716680044
+ EulerBlock
+ Author: Ney Rafael Secco (ney@ita.br)
+ Instituto Tecnologico de Aeronautica - ITA
+ Sao Jose dos Campos - Brazil
+ 2022-09
+
+ Reading mesh file: grid.xyz
+ Iteration RK5:            0  Residual:    9.2146643847406839E-009
+ Reached desired residual tolerance
+ Final iteration:            1  Residual:    9.2146643847406839E-009
+ Final Bicgstab residual:   4.4832270533960817E-009
+ Solved adjoint system for function: cl_jlow 
+ Adjoint residual:   1.3953398860385251E-012
+ Final Bicgstab residual:   9.7679566948901145E-009
+ Solved adjoint system for function: cd_jlow 
+ Adjoint residual:   3.0401359149860886E-012
+ Solution time:    10.656250000000000       seconds
+evaluation: 14
+CL: 0.434256737
+CD: 0.00488848678
+maxt: 0.10950025052481682
+mint: 0.009999999141021005
+Al: [-0.05       -0.20314275 -0.10647595 -0.05      ]
+Au: [0.12694442 0.13648835 0.18591317 0.18153676]
+alpha [deg]: 0.9403848319587892
+grads: {'CL': array([ 0.33352714,  0.7138038 ,  0.91565797,  1.53577393,  0.67097793,      
+        1.14168371,  1.16677112,  1.56645466, 11.8397604 ]), 'CD': array([-0.01352062,  0.00396418,  0.0061076 ,  0.01129892,  0.00633687,
+        0.01059833,  0.00992319,  0.00854782,  0.09604833]), 'maxt': array([-0.08994174, -0.16374311, -0.10309105, -0.02243802,  0.08994174,
+        0.16374311,  0.10309105,  0.02243802,  0.        ]), 'mint': array([-4.46822048e-06, -2.63685982e-04, -5.40520154e-03, -3.79634937e-02,
+        4.46822048e-06,  2.63685982e-04,  5.40520154e-03,  3.79634937e-02,
+        0.00000000e+00])}
+
+
+=========================================
+OPTIMUM POINT
+CL: 0.434256737
+CD: 0.00488848678
+maxt: 0.10950025052481682
+xopt: [-0.05       -0.20314275 -0.10647595 -0.05        0.12694442  0.13648835
+  0.18591317  0.18153676  0.01641281]
+=========================================
