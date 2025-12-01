@@ -1,17 +1,24 @@
 # IMPORTS
 import numpy as np
 from scipy.optimize import minimize
-import auxmod as am
 import matplotlib.pyplot as plt
 import seaborn as sns  # Add seaborn import
-import design_tools_default as dt
+
 from pprint import pprint
-from plot3d import plot3d
 from time import time
 import copy  # Add this import
 # removing warnings in terminal
 import warnings
 import pandas as pd
+
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+import auxmod as am
+import design_tools as dt
+import aux_tools as at
+from plot3d import plot3d
+
 warnings.filterwarnings("ignore")
 
 # input fixed parameters
@@ -85,7 +92,8 @@ def objfun(X):
     print('Cht:', Cht)
     print('xnlg:', xnlg)
     print('xmlg:', xmlg)
-    #print('ymlg:', ymlg)
+    print('ymlg:', ymlg)
+
     # analyse to see objective functions
     W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = dt.analyze(aircraft, W0_guess, T0_guess, Mach_cruise, altitude_cruise, range_cruise, Mach_altcruise, range_altcruise, altitude_altcruise, loiter_time, altitude_takeoff, distance_takeoff, TO_flap_def, TO_slat_def, altitude_landing, distance_landing, LD_flap_def, LD_slat_def, MLW_frac)
     print(SM_aft)
@@ -129,7 +137,7 @@ def confun(X):
     print('Cht:', Cht)
     print('xnlg:', xnlg)
     print('xmlg:', xmlg)
-    #print('ymlg:', ymlg)
+    print('ymlg:', ymlg)
 
     new_dimensions = dt.geometry(aircraft) # Calcula as dimensões da aeronave.
     aircraft['dimensions'].update(new_dimensions)   # Atualiza as dimensões da aeronave
@@ -173,8 +181,8 @@ con1 = {
 cons = [con1]
 
 # Define starting point and reference values 
-aircraft = dt.my_aircraft() # Define a aeronave nossa como referencia.
-new_dimensions = dt.geometry(aircraft) # Calcula as dimensões da aeronave.
+aircraft = dt.my_aircraft()
+new_dimensions = dt.geometry(aircraft)
 aircraft['dimensions'].update(new_dimensions)   # Atualiza as dimensões da aeronave.
 
 original_aircraft = copy.deepcopy(aircraft)  # Use deepcopy instead of copy
@@ -200,9 +208,9 @@ bounds = {
     'AR_w': [7, 12],
     'Sw': [80, 120],
     'sweep_w': [0, 40], # degrees
-    'Cht': [0.8, 1.5],
-    'xnlg': [1, 3],
-    'xmlg': [15, 17],
+    'Cht': [1.3, 1.6],
+    'xnlg': [2, 3],
+    'xmlg': [15, 20],
     'ymlg': [2, 6]
 }
 
@@ -278,14 +286,14 @@ df = pd.DataFrame({
 
 print(df)
 
-df.to_excel('otimizacao.xlsx', index=False)
+df.to_excel('PRJ-23\\Otimização\\Resultados\\Potimizacao.xlsx', index=False)
 
 
 # generating a 3d plot
-fig_3d, ax_3d = plot3d([aircraft, original_aircraft], labels=['Optimized', 'Original'])
+fig_3d, ax_3d = plot3d([aircraft, original_aircraft], labels=['Optimized', 'Original'], show=True)
 ax_3d.view_init(90, 0)
 ax_3d.set_zticks([])
-fig_3d.savefig('3dplot.png', dpi=500)
+fig_3d.savefig('PRJ-23\\Otimização\\Resultados\\3dplot.png', dpi=500)
 
 
 # Plot optimization history
@@ -305,7 +313,7 @@ ax1.legend(loc='upper right', fontsize=10, frameon=True, fancybox=True, shadow=T
 ax1.grid(True, alpha=0.3)
 sns.despine()
 plt.tight_layout()
-plt.savefig('design_variables_history.png', dpi=500)
+plt.savefig('PRJ-23\\Otimização\\Resultados\\design_variables_history.png', dpi=500)
 
 # Plot 2: Objective function
 fig2, ax2 = plt.subplots(figsize=(12, 6))
@@ -316,7 +324,7 @@ ax2.grid(True, alpha=0.3)
 ax2.ticklabel_format(style='scientific', axis='y', scilimits=(0,0))
 sns.despine()
 plt.tight_layout()
-plt.savefig('objective_function_history.png', dpi=500)
+plt.savefig('PRJ-23\\Otimização\\Resultados\\objective_function_history.png', dpi=500)
 
 # Plot 3: Constraints
 fig3, ax3 = plt.subplots(figsize=(12, 8))
@@ -346,5 +354,4 @@ ax3.legend(loc='upper right', fontsize=10, frameon=True, fancybox=True, shadow=T
 ax3.grid(True, alpha=0.3)
 sns.despine()
 plt.tight_layout()
-plt.savefig('constraints_history.png', dpi=500)
-
+plt.savefig('PRJ-23\\Otimização\\Resultados\\constraints_history.png', dpi=500)

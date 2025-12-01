@@ -15,13 +15,17 @@ from pymoo.optimize import minimize
 from pymoo.core.problem import ElementwiseProblem
 import numpy as np
 import matplotlib.pyplot as plt
-import auxmod as am
-import design_tools_default as dt
 import seaborn as sns
-from plot3d import plot3d
 import pandas as pd
 from pprint import pprint
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+import auxmod as am
+import design_tools as dt
+import aux_tools as at
+from plot3d import plot3d
 
 # input fixed parameters
 gravity = 9.81
@@ -153,7 +157,7 @@ bounds = {
     'AR_w': [7, 12],
     'Sw': [80, 120],
     'sweep_w': [0, 40], # degrees
-    'Cht': [0.8, 1.5],
+    'Cht': [1.3, 1.6],
     'xnlg': [1, 3],
     'xmlg': [15, 17],
     'ymlg': [2, 6]
@@ -193,7 +197,7 @@ sns.despine()
 plt.tight_layout()
 plt.grid(True, alpha=0.3)
 plt.legend()
-plt.savefig('pareto_front.png', dpi=500)
+plt.savefig('PRJ-23\\Otimização\\Resultados\\pareto_front.png', dpi=500)
 
 # Sort the Pareto front by W0 (first objective) to get proper beginning, middle, end
 sorted_indices = np.argsort(res.F[:, 0])
@@ -258,7 +262,7 @@ print("\nPareto Points Comparison:")
 print(pareto.round(3))
 
 # Save to Excel
-pareto.to_excel('pareto_points_comparison.xlsx', index=False)
+pareto.to_excel('PRJ-23\\Otimização\\Resultadospareto_points_comparison.xlsx', index=False)
 
 # Plot 3D views for the 3 selected points side by side, each compared to original
 fig = plt.figure(figsize=(18, 6))
@@ -285,4 +289,4 @@ for i, (aircraft_config, point_name) in enumerate(zip(aircraft_configs, pareto_p
     plt.close(fig_temp)  # Close temporary figure
 
 plt.tight_layout()
-plt.savefig('pareto_3d_comparison.png', dpi=500)
+plt.savefig('PRJ-23\\Otimização\\Resultados\\pareto_3d_comparison.png', dpi=500)
