@@ -262,7 +262,7 @@ print("\nPareto Points Comparison:")
 print(pareto.round(3))
 
 # Save to Excel
-pareto.to_excel('PRJ-23\\Otimização\\Resultadospareto_points_comparison.xlsx', index=False)
+pareto.to_excel('PRJ-23\\Otimização\\Resultados\\pareto_points_comparison.xlsx', index=False)
 
 # Plot 3D views for the 3 selected points side by side, each compared to original
 fig = plt.figure(figsize=(18, 6))

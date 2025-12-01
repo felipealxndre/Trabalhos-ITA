@@ -96,13 +96,12 @@ def objfun(X):
 
     # analyse to see objective functions
     W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = dt.analyze(aircraft, W0_guess, T0_guess, Mach_cruise, altitude_cruise, range_cruise, Mach_altcruise, range_altcruise, altitude_altcruise, loiter_time, altitude_takeoff, distance_takeoff, TO_flap_def, TO_slat_def, altitude_landing, distance_landing, LD_flap_def, LD_slat_def, MLW_frac)
-    print(SM_aft)
-    # Não acho necessário normalizar a função objetivo;
-    f = W0
+    
+    f = W0 / references['W0']
 
     # Save results for the plot
     Xlist.append(X)
-    flist.append(f)
+    flist.append(W0)
 
     return f
 
@@ -161,12 +160,14 @@ def confun(X):
         (4.5 - aircraft['dimensions']['ldg']['ymlg']) / 4.5,    # y_mlg <= 4.5m
         (13.5 - (aircraft['dimensions']['EV']['zt'] - aircraft['dimensions']['ldg']['z'])) / 13.5,   # zt_v - z_mlg <= 13.5m
         
+        
         # new constraints
         (aircraft['dimensions']['EV']['L'] - 13) / 13,          # L_h >= 13
+        (0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
+
     ]
     # Optionally, save results for plotting
     glist.append([constraints])
-    print(glist)
 
 
     return constraints
@@ -207,7 +208,7 @@ pprint(references)
 bounds = {
     'AR_w': [7, 12],
     'Sw': [80, 120],
-    'sweep_w': [0, 40], # degrees
+    'sweep_w': [20, 40], # degrees
     'Cht': [1.3, 1.6],
     'xnlg': [2, 3],
     'xmlg': [15, 20],
@@ -271,7 +272,7 @@ optimized_values = [
     aircraft['dimensions']['ldg']['xnlg'],
     aircraft['dimensions']['ldg']['xmlg'],
     aircraft['dimensions']['ldg']['ymlg'],
-    result.fun
+    result.fun * references['W0']
 ]
 
 print(original_values)
@@ -328,7 +329,7 @@ plt.savefig('PRJ-23\\Otimização\\Resultados\\objective_function_history.png', 
 
 # Plot 3: Constraints
 fig3, ax3 = plt.subplots(figsize=(12, 8))
-garray = np.array([g[0] for g in glist])  # Extract constraints from nested lists
+garray = np.array([g[0] for g in glist])
 constraint_labels = [
     r'$\Delta S_{wlan} \geq 0$',
     r'$SM_{fwd} \leq 0.30$',
@@ -342,10 +343,12 @@ constraint_labels = [
     r'$b_w \leq 36m$',
     r'$y_{mlg} \leq 4.5m$',
     r'$z_{tv} - z_{mlg} \leq 13.5m$',
-    r'$L_h \geq 13m$'
+    r'$L_h \geq 13m$',
+    r'$|x_{EV} - x_{EH}| \leq 0.5m$'
 ]
 
-for i in range(garray.shape[1]):
+# Não plote a última restrição
+for i in range(garray.shape[1] - 1):
     ax3.plot(garray[:, i], label=constraint_labels[i], linewidth=2)
 ax3.axhline(y=0, color='black', linestyle='--', alpha=0.7, linewidth=2)
 ax3.set_ylabel('Restrições', fontsize=14)
