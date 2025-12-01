@@ -95,40 +95,10 @@ damp(eigval_Ex3)
 
 %% Ex.4
 
-<<<<<<< HEAD
-<<<<<<< HEAD:MVO-32/Códigos Base/MAIN.m
-=======
-<<<<<<< HEAD:MVO-32/Códigos Base/Lista 3 - Taty e Felipe/MAIN.m
 x0_Ex4 = [ X_eq_Ex2(2); U_eq_Ex2(1); U_eq_Ex2(3); 0.0; 0.5; -1.0];
-=======
->>>>>>> 3dd8e0ae60aa2ab5606fbd946c88c72b1b1e913a
-x0_Ex4 = [
-    X_eq_Ex2(1);    % V
-    X_eq_Ex2(2);    % alpha
-    0;              % q
-    X_eq_Ex2(4);    % theta
-    0;              % phi
-    0;              % p
-    0;              % r
-    0;              % psi
-    U_eq_Ex2(1);    % delta_1
-    U_eq_Ex2(3);    % i_t
-    0;              % delta_a
-    0               % delta_r
-];
-
-% Aumentar 'MaxFunEvals' e 'MaxIter' para dar fôlego ao otimizador 12x12
-options = optimset('Display','iter','TolX',1e-10,'TolFun',1e-10, 'MaxFunEvals', 10000, 'MaxIter', 1000);
-
-<<<<<<< HEAD
-=======
-x0_Ex4 = [ X_eq_Ex2(2); U_eq_Ex2(1); U_eq_Ex2(3); 0.0; 0.5; -1.0];
->>>>>>> e73cdf8fed4e7dfb7bc6ddcb53851918cda23541:MVO-32/Códigos Base/Lista 3 - Taty e Felipe/MAIN.m
-=======
->>>>>>> 6ce0615 (feat: Relatório de Ensaio em Voo):MVO-32/Códigos Base/MAIN.m
->>>>>>> 3dd8e0ae60aa2ab5606fbd946c88c72b1b1e913a
 [x_sol_Ex4, ~] = fsolve(@trim_function_Ex4, x0_Ex4, options, trim_par);
 [~, X_eq_Ex4, U_eq_Ex4, Y_eq_Ex4] = trim_function_Ex4(x_sol_Ex4, trim_par);
+
 fprintf('\n----- EX.4 -----\n\n');
 fprintf('   %-12s = %8.2f %s\n','V',X_eq_Ex4(1),'m/s');
 fprintf('   %-12s = %8.3f %s\n','alpha',X_eq_Ex4(2),'deg');
