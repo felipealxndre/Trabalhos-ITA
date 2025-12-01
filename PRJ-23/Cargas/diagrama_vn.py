@@ -257,7 +257,7 @@ def plot_envelope_combinado(titulo,
     plt.legend(loc='best', fontsize=10)
 
     plt.tight_layout()
-    plt.savefig(f"Diagrama_vn_{titulo.replace(' ', '_').lower()}.png", dpi=300)
+    plt.savefig(f"Cargas/Diagrama_vn_{titulo.replace(' ', '_').lower()}.png", dpi=300)
 
 
 def rodar_caso(W, rho_key, titulo):
