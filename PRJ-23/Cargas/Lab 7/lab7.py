@@ -155,7 +155,7 @@ def calcular_diagrama_vn(W, rho, nome_caso):
     plt.legend(loc='best', fontsize=10)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig(f'Resultados/diagrama_vn_{nome_caso.replace(" ", "_").lower()}.png', dpi=300)
+    plt.savefig(f'Cargas/Lab 7/diagrama_vn_{nome_caso.replace(" ", "_").lower()}.png', dpi=300)
     
     # Pegar o dataframe do caso
     df_caso = get_dataframe(nome_caso, VS, VA, VC, VD, W, rho, mu_g, Kg, delta_n_C, delta_n_D)
