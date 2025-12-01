@@ -7,19 +7,32 @@ function [f, X, U, Y] = trim_function_Ex4(x, trim_par)
 % Assume-se equilíbrio com beta=0 (sem derrapagem), mas phi (inclinação)
 % é livre para compensar as forças laterais.
 
+<<<<<<< HEAD
+<<<<<<< HEAD:MVO-32/Códigos Base/trim_function_Ex4.m
+% 1. Definir valores fixos para esta trimagem
+beta_deg_eq    = 0;       % Assunção de voo com zero derrapagem
+delta_e_deg_eq = 0;       % Assunção de trimagem com i_t (do Ex. 2)
+delta_2_eq     = 0.15;    % Condição de falha do Ex. 4
+=======
+=======
 <<<<<<< HEAD:MVO-32/Códigos Base/Lista 3 - Taty e Felipe/trim_function_Ex4.m
+>>>>>>> 3dd8e0ae60aa2ab5606fbd946c88c72b1b1e913a
 alpha_deg    = x(1);
 delta1 = min(x(2), 1);
 it_deg       = x(3);  
 phi_deg      = x(4);
 delta_a_deg  = x(5);
 delta_r_deg  = x(6);
+<<<<<<< HEAD
+>>>>>>> e73cdf8fed4e7dfb7bc6ddcb53851918cda23541:MVO-32/Códigos Base/Lista 3 - Taty e Felipe/trim_function_Ex4.m
+=======
 =======
 % 1. Definir valores fixos para esta trimagem
 beta_deg_eq    = 0;       % Assunção de voo com zero derrapagem
 delta_e_deg_eq = 0;       % Assunção de trimagem com i_t (do Ex. 2)
 delta_2_eq     = 0.15;    % Condição de falha do Ex. 4
 >>>>>>> 6ce0615 (feat: Relatório de Ensaio em Voo):MVO-32/Códigos Base/trim_function_Ex4.m
+>>>>>>> 3dd8e0ae60aa2ab5606fbd946c88c72b1b1e913a
 
 % 2. Desempacotar as 12 incógnitas do vetor 'x'
 %    x = [V, alpha, q, theta, phi, p, r, psi, delta_1, i_t, delta_a, delta_r]
@@ -36,6 +49,9 @@ i_t_deg_in   = x(10);
 delta_a_in   = x(11);
 delta_r_in   = x(12);
 
+<<<<<<< HEAD
+<<<<<<< HEAD:MVO-32/Códigos Base/trim_function_Ex4.m
+=======
 <<<<<<< HEAD:MVO-32/Códigos Base/Lista 3 - Taty e Felipe/trim_function_Ex4.m
 V            = trim_par.V;
 theta_deg    = alpha_deg;
@@ -48,6 +64,7 @@ psi_deg      = 0;
 x_pos        = 0;
 y_pos        = 0;
 =======
+>>>>>>> 3dd8e0ae60aa2ab5606fbd946c88c72b1b1e913a
 % 3. Montar o vetor de estado X (12 estados)
 X = [
     V_in;
@@ -63,7 +80,22 @@ X = [
     psi_deg_in;
     0               % y_pos (irrelevante para o equilíbrio)
 ];
+<<<<<<< HEAD
+=======
+V            = trim_par.V;
+theta_deg    = alpha_deg;
+q_deg_s      = 0;
+h            = trim_par.h;
+beta_deg     = 0; 
+p_deg_s      = 0;
+r_deg_s      = 0;
+psi_deg      = 0;
+x_pos        = 0;
+y_pos        = 0;
+>>>>>>> e73cdf8fed4e7dfb7bc6ddcb53851918cda23541:MVO-32/Códigos Base/Lista 3 - Taty e Felipe/trim_function_Ex4.m
+=======
 >>>>>>> 6ce0615 (feat: Relatório de Ensaio em Voo):MVO-32/Códigos Base/trim_function_Ex4.m
+>>>>>>> 3dd8e0ae60aa2ab5606fbd946c88c72b1b1e913a
 
 % 4. Montar o vetor de controle U (6 controles)
 U = [
