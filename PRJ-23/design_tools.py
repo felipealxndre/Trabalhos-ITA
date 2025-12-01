@@ -27,27 +27,51 @@ def my_aircraft():
             'x_tank_c_w': 0.2}
     
     
+    # original
+
+    # EH  =  {'Cht':1.1, #Carteado
+    #         'AR':3.5, #Carteado
+    #         'taper':0.4, #Carteado
+    #         'sweep':26*np.pi/180, #Fokker 100
+    #         'dihedral':0*np.pi/180, #Fokker 100
+    #         'Lc':3.6,
+    #         'zr':1.0318,
+    #         'tcr': 0.1,
+    #         'tct': 0.1,
+    #         'eta': 1.0}
+
+    # EV  =  {'Cvt':0.08, #Carteado
+    #         'AR':1.0, #Carteado
+    #         'taper':0.8, #Fokker 100
+    #         'sweep':41*np.pi/180, #Default
+    #         'Lb':0.38,
+    #         'zr':1.4968,
+    #         'tcr': 0.1,
+    #         'tct': 0.1}
+
+    
     # e175
     
-    EH  =  {'Cht': 1.54,
-    		'AR':4.30,
-    		'taper':0.50,
-    		'sweep':24*np.pi/180,
-    		'dihedral':8*np.pi/180,
-    		'Lc':4.83, # não mexi
-    		'zr':0.0,
-    		'tcr': 0.1,
-    		'tct': 0.1,
-    		'eta': 1.0}
-    
-    EV  =  {'Cvt':0.12,
-    		'AR':1.89,
-    		'taper':0.41,
-    		'sweep':30*np.pi/180,
-    		'Lb':0.55,
-    		'zr':0.0,
-    		'tcr': 0.1,
-    		'tct': 0.1}
+    EH  =  {'Cht':1.54,
+            'AR':4.3,
+            'taper':0.5,
+            'sweep':24*np.pi/180,
+            'dihedral':0*np.pi/180, 
+            'Lc':4.3,
+            'zr':1.0318,
+            'tcr': 0.1,
+            'tct': 0.1,
+            'eta': 1.0}
+   
+   
+    EV  =  {'Cvt':0.10,
+                'AR':1.89,
+                'taper':0.41, 
+                'sweep':30*np.pi/180, 
+                'Lb':0.51,
+                'zr':1.4968,
+                'tcr': 0.1,
+                'tct': 0.1}
 
 
     geo_param = {'wing':wing,
