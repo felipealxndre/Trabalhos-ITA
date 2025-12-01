@@ -1,0 +1,265 @@
+CG_traseiro
+
+#----------------------------------------------------
+# Parâmetros de referência do escoamento
+#Mach
+0.75
+
+#----------------------------------------------------
+# Definição de simetria
+#iYsym  iZsym  Zsym
+0       0      0.0
+
+#----------------------------------------------------
+# Parâmetros de referência da geometria
+#Sref    Cref      Bref
+105.5    3.5269      32.8040
+
+#----------------------------------------------------
+# Ponto de referência para momentos (CG dianteiro = 14.5670 	CG traseiro = 14.8480)
+#Xref    Yref    Zref
+14.8480     0     0
+
+#-CDp -Valor obtido pela função aerodinamica no cruzeiro
+0.06483887410941494
+
+#====================================================================
+# Definição da Superfície da Asa (calculando com a cordenada x_root = 0 e z_root = 0 e depois reposicionando)
+SURFACE
+Asa Principal
+
+# Discretização da malha de vórtices
+#Nchordwise  Cspace   Nspanwise   Sspace
+12           -2.0      20          1.0
+
+# Comando para espelhar a geometria no eixo Y
+YDUPLICATE
+0.0
+
+#-------------------------------------------------------------
+# Seção da Raiz
+SECTION
+#Xle    Yle    Zle     Chord   Ainc
+0.0     0.0    0.0     4.9478    0.0
+
+AFILE
+airfoil.dat
+
+#-------------------------------------------------------------
+# Seção de Início do (Flap 20% semiasa e 30% corda)
+SECTION
+#Xle         Yle      Zle        Chord      Ainc
+1.5656188    3.2804   0.22938    4.255108   0.0
+
+CONTROL
+#Name   Gain    Xhinge  HingeVec     SgnDup
+flap     1.0	  0.70  0. 0. 0. 	 +1
+DESIGN
+iw 1.0
+
+AFILE
+airfoil.dat
+
+#-------------------------------------------------------------
+# Seção de Fim do Flap / Início do Aileron (Flap 70% semiasa e 30% corda) e (Aileron 70% semiasa e 25% corda)
+SECTION
+#Xle         Yle       Zle        Chord      Ainc
+5.4796660    11.4814   0.80283    2.523378   0.0
+
+AFILE
+airfoil.dat
+
+CONTROL
+#Name   Gain    Xhinge  HingeVec     SgnDup
+flap     1.0	  0.70  0. 0. 0. 	 +1
+CONTROL
+#Name   Gain    Xhinge  HingeVec     SgnDup
+aileron   1.0    0.75    0.0 0.0 0.0  1.0
+DESIGN
+iw 1.0
+
+#-------------------------------------------------------------
+# Seção de Fim do Aileron
+SECTION
+#Xle         Yle       Zle        Chord      Ainc
+7.4366897    15.5819   1.089555   1.657513   0.0
+
+AFILE
+airfoil.dat
+
+CONTROL
+#Name     Gain    Xhinge  HingeVec     SgnDup
+aileron   1.0    0.75    0.0 0.0 0.0  1.0
+DESIGN
+iw 1.0
+
+#-------------------------------------------------------------
+# Seção da Ponta
+
+SECTION
+#Xle	      Yle    Zle    Chord   Ainc
+7.82809441786 16.402 1.1469 1.48434 0.0
+
+AFILE
+airfoil.dat
+
+TRANSLATE
+11.6 0.0 -1.72
+
+
+
+#====================================================================
+# Definição do Profundor
+SURFACE
+Profundor
+
+# Discretização da malha de vórtices
+#Nchordwise  Cspace   Nspanwise   Sspace
+12           -2.0     20          1.0
+
+# Espelhar a geometria
+YDUPLICATE
+0.0
+
+# Seção da Raiz--------------
+SECTION
+#Xle      Yle    Zle      Chord    Ainc
+26.19606    0.0    0   4.3355     0.0
+
+CONTROL
+#Name      Gain    Xhinge  HingeVec     SgnDup
+elevator   1.0    0.60    0.0 0.0 0.0  1.0
+DESIGN
+it 1.0
+
+# Seção da Ponta---------------
+SECTION
+#Xle      Yle     Zle      Chord    Ainc
+29.4367    5.311    0      1.7342     0.0
+
+CONTROL
+#Name      Gain    Xhinge  HingeVec     SgnDup
+elevator   1.0    0.60    0.0 0.0 0.0  1.0
+DESIGN
+it 1.0
+
+TRANSLATE
+0.0 0.0 2.2
+
+
+#====================================================================
+# Definição do Leme (feito com z_root = 0 e depois transladado)
+SURFACE
+Leme
+
+# Discretização da malha de vórtices
+#Nchordwise  Cspace   Nspanwise   Sspace
+12           -2.0     20          1.0
+
+# Seção da Raiz -----------------------
+SECTION
+#Xle      Yle    Zle      Chord    Ainc
+24.8771    0.0    0   	5.2364     0.0
+
+CONTROL
+#Name   Gain    Xhinge  HingeVec     SgnDup
+rudder   1.0    0.70    0.0 0.0 0.0  1.0
+
+# Seção da Ponta ---------------------
+SECTION
+#Xle      Yle    Zle      Chord    Ainc
+29.2357    0.0    4.7128    4.1892     0.0
+
+CONTROL
+#Name   Gain    Xhinge  HingeVec     SgnDup
+rudder   1.0    0.70    0.0 0.0 0.0  1.0
+
+TRANSLATE
+0.0 0.0 2.21
+
+
+#====================================================================
+# Definição da Fuselagem
+BODY
+Fuselage
+# Nbody Bspace
+30 1.0
+
+SCALE
+# Length Diameter Diameter
+30.2 3.42 3.42
+
+BFILE
+fuseB737_nondim.dat
+
+#====================================================================
+#--------------------------------------------------
+SURFACE
+Nacelle
+#Nchordwise  Cspace   Nspanwise  Sspace
+6            1.0      12          0.0
+
+COMPONENT
+1
+
+YDUPLICATE
+0.0
+
+SCALE
+# Length, Hor. radius, and Vert. radius
+3.1   0.65  0.65
+
+TRANSLATE
+12.0  4.2  -2.5193
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.0    1.0       1.0   0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.5    0.866     1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.866  0.5       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  1.0    0.0       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.866 -0.5       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.5   -0.866     1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.0   -1.0       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00 -0.5   -0.866     1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00 -0.866 -0.5       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00 -1.0    0.0       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00 -0.866  0.5       1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00 -0.5    0.866     1.0    0.    1          0.
+
+SECTION		     
+#Xle   Yle    Zle      Chord   Ainc  Nspanwise  Sspace
+ 0.00  0.0    1.0       1.0    0.    1          0.

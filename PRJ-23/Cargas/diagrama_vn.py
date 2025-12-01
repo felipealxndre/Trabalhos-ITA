@@ -167,7 +167,7 @@ def plot_envelope_combinado(titulo,
     # Linhas tracejadas verdes retas de (0,1) até (VD, n_D) e (VD, 2-n_D)
     V_gust_full = np.linspace(0, V_eD, 200)
     n_gust_pos_line = 1 + (n_D - 1) * (V_gust_full / V_eD)
-    n_gust_neg_line = 1 + ((2.0 - n_D) - 1) * (V_gust_full / V_eD)
+    n_gust_neg_line = 1 + (1 - n_D) * (V_gust_full / V_eD)
 
     plt.plot(V_gust_full, n_gust_pos_line, "g-.", linewidth=2, alpha=0.8)
     plt.plot(V_gust_full, n_gust_neg_line, "g-.", linewidth=2, alpha=0.8)
