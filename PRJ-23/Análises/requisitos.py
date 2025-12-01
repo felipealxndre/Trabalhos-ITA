@@ -8,6 +8,17 @@ import design_tools as dt
 import aux_tools as at
 
 aircraft = dt.my_aircraft()
+
+# Updated aircraft parameters - review
+aircraft['geo_param']['wing']['AR'] = 9.151089
+aircraft['geo_param']['wing']['S'] = 99.033744
+aircraft['geo_param']['wing']['sweep'] = 0.230809
+aircraft['geo_param']['EH']['Cht'] = 0.900003
+aircraft['dimensions']['ldg']['xnlg'] = 1.0
+aircraft['dimensions']['ldg']['xmlg'] = 15.610284
+aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
+
+
 new_dimensions = dt.geometry(aircraft)
 aircraft['dimensions'].update(new_dimensions)
 
@@ -58,7 +69,7 @@ distance_landing = 1150
 MLW_frac = 0.84
 
 
-W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, \
+W0, Wf, T0, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, \
 frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = \
     dt.analyze(aircraft, W0_guess, T0_guess, 
                 Mach_cruise, altitude_cruise, range_cruise,
@@ -139,3 +150,18 @@ df.to_excel(output_file, index=False)
 
 print("-" * 83)
 print(df[['Parâmetro', 'Valor', 'Status']].to_string())
+
+
+print("\nDetalhes do Análise de Peso e Balanceamento:\n")
+print(f"W0 = {W0}")
+print(f"Wf = {Wf}\n")
+print(f"T0 = {T0}\n")
+print(f"deltaS_wlan = {deltaS_wlan}\n")
+print(f"SM_fwd = {SM_fwd}")
+print(f"SM_aft = {SM_aft}\n")
+print(f"b_tank_b_w = {b_tank_b_w}\n")
+print(f"frac_nlg_fwd = {frac_nlg_fwd}")
+print(f"frac_nlg_aft = {frac_nlg_aft}")
+print(f"alpha_tipback = {alpha_tipback}")
+print(f"alpha_tailstrike = {alpha_tailstrike}")
+print(f"phi_overturn = {phi_overturn}")

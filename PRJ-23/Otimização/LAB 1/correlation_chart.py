@@ -7,7 +7,12 @@ from pymoo.core.problem import Problem
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.operators.sampling.lhs import LHS
 from aux_tools_doe import corrdot
-import design_tools_myaircraft as dt
+
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+import design_tools as dt
+import aux_tools as at
 
 #=========================================
 
