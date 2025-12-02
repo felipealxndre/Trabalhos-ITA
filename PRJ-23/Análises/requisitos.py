@@ -4,19 +4,19 @@ import numpy as np
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-import design_tools as dt
+import design_tools_optmized as dt
 import aux_tools as at
 
 aircraft = dt.my_aircraft()
 
 # Updated aircraft parameters - review
-aircraft['geo_param']['wing']['AR'] = 9.151089
-aircraft['geo_param']['wing']['S'] = 99.033744
-aircraft['geo_param']['wing']['sweep'] = 0.230809
-aircraft['geo_param']['EH']['Cht'] = 0.900003
-aircraft['dimensions']['ldg']['xnlg'] = 1.0
-aircraft['dimensions']['ldg']['xmlg'] = 15.610284
-aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
+# aircraft['geo_param']['wing']['AR'] = 9.151089
+# aircraft['geo_param']['wing']['S'] = 99.033744
+# aircraft['geo_param']['wing']['sweep'] = 0.230809
+# aircraft['geo_param']['EH']['Cht'] = 0.900003
+# aircraft['dimensions']['ldg']['xnlg'] = 1.0
+# aircraft['dimensions']['ldg']['xmlg'] = 15.610284
+# aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
 
 
 new_dimensions = dt.geometry(aircraft)
