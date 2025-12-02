@@ -163,7 +163,7 @@ def confun(X):
         
         # new constraints
         (aircraft['dimensions']['EV']['L'] - 13) / 13,          # L_h >= 13
-        (0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
+        #(0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
 
     ]
     # Optionally, save results for plotting

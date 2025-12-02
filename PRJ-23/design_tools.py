@@ -29,7 +29,7 @@ def my_aircraft():
     
     # original
 
-    # EH  =  {'Cht':1.4, #Carteado
+    # EH  =  {'Cht':1.1, #Carteado
     #         'AR':3.5, #Carteado
     #         'taper':0.4, #Carteado
     #         'sweep':26*np.pi/180, #Fokker 100
@@ -1239,9 +1239,8 @@ def analyze(aircraft, W0_guess, T0_guess,
     # Landing gear design
     frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = landing_gear(aircraft)
 
-    print(T0)
 
-    return W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn
+    return W0, Wf, T0, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn
 
 
 
