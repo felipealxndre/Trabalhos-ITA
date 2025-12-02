@@ -96,8 +96,8 @@ class MyProblem(ElementwiseProblem):
 
         # analyse to see objective functions
         W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = dt.analyze(aircraft, W0_guess, T0_guess, Mach_cruise, altitude_cruise, range_cruise, Mach_altcruise, range_altcruise, altitude_altcruise, loiter_time, altitude_takeoff, distance_takeoff, TO_flap_def, TO_slat_def, altitude_landing, distance_landing, LD_flap_def, LD_slat_def, MLW_frac)
-        f1 = W0
-        f2 = Wf
+        f1 = W0/references['W0']  # Objective 1: W0
+        f2 = Wf/references['Wf']  # Objective 2: Wf
 
         # Compute constraints - aqui tem que ser menor igual a zero
         # Constraints
@@ -117,6 +117,7 @@ class MyProblem(ElementwiseProblem):
             
             # new constraints
             (aircraft['dimensions']['EV']['L'] - 13) / 13,          # L_h >= 13
+            #(0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
         ]
 
         # truque pra colocar todas como negativas pra ser no formato do pymoo
@@ -156,10 +157,10 @@ references = dict(zip(reference_keys, reference_values))
 bounds = {
     'AR_w': [7, 12],
     'Sw': [80, 120],
-    'sweep_w': [0, 40], # degrees
+    'sweep_w': [20, 40], # degrees
     'Cht': [1.3, 1.6],
-    'xnlg': [1, 3],
-    'xmlg': [15, 17],
+    'xnlg': [2, 3],
+    'xmlg': [15, 20],
     'ymlg': [2, 6]
 }
 
@@ -175,8 +176,8 @@ plt.rcParams['font.family'] = 'Segoe UI'  # Set font to Segoe UI
 sns.set_palette("Set2")
 
 plt.figure(figsize=(12, 5))
-sns.scatterplot(x=res.F[:,0], y=res.F[:,1], s=50)
-sns.lineplot(x=res.F[:,0], y=res.F[:,1])
+sns.scatterplot(x=res.F[:,0] * references['W0'], y=res.F[:,1] * references['Wf'], s=50)
+sns.lineplot(x=res.F[:,0] * references['W0'], y=res.F[:,1] * references['Wf'])
 
 # Sort the Pareto front by W0 (first objective) to get proper beginning, middle, end
 sorted_indices = np.argsort(res.F[:, 0])
@@ -250,8 +251,8 @@ for i, idx in enumerate(indices):
         'x_nlg': xnlg,
         'x_mlg': xmlg,
         'y_mlg': ymlg,
-        'W0': res.F[idx, 0],
-        'Wf': res.F[idx, 1]
+        'W0': res.F[idx, 0] * references['W0'],
+        'Wf': res.F[idx, 1] * references['Wf']
     })
     
     print(f"{pareto_points[i]} Point - W0: {res.F[idx, 0]:.0f}, Wf: {res.F[idx, 1]:.0f}")

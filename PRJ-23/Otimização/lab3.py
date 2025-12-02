@@ -1,16 +1,20 @@
 # IMPORTS
 import numpy as np
 from scipy.optimize import minimize
-import auxmod as am
 import matplotlib.pyplot as plt
-import design_tools_default as dt
 from pprint import pprint
-import aux_tools as at
 import copy  # Add this import
 # removing warnings in terminal
 import warnings
 import pandas as pd
 warnings.filterwarnings("ignore")
+
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+import design_tools_optmized as dt
+import aux_tools as at
+import auxmod as am
 
 # input fixed parameters
 gravity = 9.81
@@ -42,14 +46,14 @@ aircraft = dt.my_aircraft()
 
 # updating from the previously optimization - Point B 
 
-# Updated aircraft parameters - review
-aircraft['geo_param']['wing']['AR'] = 11.97
-aircraft['geo_param']['wing']['S'] = 98.77
-aircraft['geo_param']['wing']['sweep'] = 0.23
-aircraft['geo_param']['EH']['Cht'] = 0.80
-aircraft['dimensions']['ldg']['xmlg'] = 15.42
-aircraft['dimensions']['ldg']['ymlg'] = 4.11
-aircraft['dimensions']['ldg']['xnlg'] = 1.0
+# # Updated aircraft parameters - review
+# aircraft['geo_param']['wing']['AR'] = 11.97
+# aircraft['geo_param']['wing']['S'] = 98.77
+# aircraft['geo_param']['wing']['sweep'] = 0.23
+# aircraft['geo_param']['EH']['Cht'] = 0.80
+# aircraft['dimensions']['ldg']['xmlg'] = 15.42
+# aircraft['dimensions']['ldg']['ymlg'] = 4.11
+# aircraft['dimensions']['ldg']['xnlg'] = 1.0
 
 
 
@@ -75,7 +79,7 @@ a = np.sqrt(1.4 * 287.05 * T)  # Speed of sound [m/s]
 
 # Reference parameters
 h = altitude_cruise
-W = 383290.40
+W = W0  # Use the optimized weight
 S_ref = aircraft['geo_param']['wing']['S']
 a_inf = a
 c_ref = aircraft['dimensions']['wing']['cm']
@@ -115,6 +119,6 @@ df_ref = pd.DataFrame({
 
 print(df_ref)
 
-df_ref.to_excel('df_ref.xlsx', index=False)
+df_ref.to_excel('Otimização\\Resultados\\df_ref.xlsx', index=False)
 
 

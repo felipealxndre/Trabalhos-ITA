@@ -1,9 +1,0 @@
-README.md
-setup.py
-airfoil_mod/__init__.py
-airfoil_mod/airfoil_mod.py
-airfoil_mod.egg-info/PKG-INFO
-airfoil_mod.egg-info/SOURCES.txt
-airfoil_mod.egg-info/dependency_links.txt
-airfoil_mod.egg-info/requires.txt
-airfoil_mod.egg-info/top_level.txt
