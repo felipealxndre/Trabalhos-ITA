@@ -14,8 +14,8 @@ gravity = 9.81
 # USAR ESSE
 def my_aircraft():
     # Defining general geometric parameters
-    wing = {'S': 81.724, #Otimizado para fornecer tração mínima
-            'AR':8.870, #Otimizar no acompanhamento
+    wing = {'S': 82.913206, #Otimizado para fornecer tração mínima
+            'AR':8.585856, #Otimizar no acompanhamento
             'taper':0.3, #Dados históricos
             'sweep':20*np.pi/180,  #Otimizar no acompanhamento
             'dihedral':4*np.pi/180, #Carteado
@@ -108,9 +108,9 @@ def my_aircraft():
    
     aircraft['dimensions']['nacelle'] = nacelle
    
-    ldg = {'xnlg': 2.582,
-           'xmlg': 16.862,
-           'ymlg': 4.052,
+    ldg = {'xnlg': 2.808354,
+           'xmlg': 16.832371,
+           'ymlg': 2.470000,
            'z': -3.67}
    
     aircraft['dimensions']['ldg'] = ldg
