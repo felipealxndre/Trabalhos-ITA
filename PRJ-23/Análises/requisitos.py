@@ -6,6 +6,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 import design_tools_optmized as dt
 import aux_tools as at
+from plot3d import plot3d
 
 aircraft = dt.my_aircraft()
 
@@ -165,3 +166,5 @@ print(f"frac_nlg_aft = {frac_nlg_aft}")
 print(f"alpha_tipback = {alpha_tipback}")
 print(f"alpha_tailstrike = {alpha_tailstrike}")
 print(f"phi_overturn = {phi_overturn}")
+
+plot3d(aircraft)

@@ -163,7 +163,7 @@ def confun(X):
         
         # new constraints
         (aircraft['dimensions']['EV']['L'] - 13) / 13,          # L_h >= 13
-        (0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
+        #(0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
 
     ]
     # Optionally, save results for plotting
@@ -329,7 +329,7 @@ plt.savefig('PRJ-23\\Otimização\\Resultados\\objective_function_history.png', 
 
 # Plot 3: Constraints
 fig3, ax3 = plt.subplots(figsize=(12, 8))
-garray = np.array([g[0] for g in glist])
+garray = np.array([g[0] for g in glist])  # Todos os itens exceto o último
 constraint_labels = [
     r'$\Delta S_{wlan} \geq 0$',
     r'$SM_{fwd} \leq 0.30$',
@@ -347,8 +347,7 @@ constraint_labels = [
     r'$|x_{EV} - x_{EH}| \leq 0.5m$'
 ]
 
-# Não plote a última restrição
-for i in range(garray.shape[1] - 1):
+for i in range(garray.shape[1]):
     ax3.plot(garray[:, i], label=constraint_labels[i], linewidth=2)
 ax3.axhline(y=0, color='black', linestyle='--', alpha=0.7, linewidth=2)
 ax3.set_ylabel('Restrições', fontsize=14)

@@ -1,14 +1,3 @@
-'''
-INSTITUTO TECNOLÓGICO DE AERONÁUTICA
-PROGRAMA DE ESPECIALIZAÇÃO EM ENGENHARIA AERONÁUTICA
-OTIMIZAÇÃO MULTIDISCIPLINAR
-
-Código com aplicações de ferramentas do Python para otimização
-multi-objetivo (pymoo 0.6.0)
-
-Maj. Ney Sêcco 2025
-'''
-
 # IMPORTS
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.optimize import minimize
@@ -18,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from pprint import pprint
+import matplotlib.cm as cm
 
 import sys
 from pathlib import Path
@@ -96,8 +86,8 @@ class MyProblem(ElementwiseProblem):
 
         # analyse to see objective functions
         W0, Wf, We, deltaS_wlan, SM_fwd, SM_aft, b_tank_b_w, frac_nlg_fwd, frac_nlg_aft, alpha_tipback, alpha_tailstrike, phi_overturn = dt.analyze(aircraft, W0_guess, T0_guess, Mach_cruise, altitude_cruise, range_cruise, Mach_altcruise, range_altcruise, altitude_altcruise, loiter_time, altitude_takeoff, distance_takeoff, TO_flap_def, TO_slat_def, altitude_landing, distance_landing, LD_flap_def, LD_slat_def, MLW_frac)
-        f1 = W0
-        f2 = Wf
+        f1 = W0/references['W0']  # Objective 1: W0
+        f2 = Wf/references['Wf']  # Objective 2: Wf
 
         # Compute constraints - aqui tem que ser menor igual a zero
         # Constraints
@@ -117,6 +107,7 @@ class MyProblem(ElementwiseProblem):
             
             # new constraints
             (aircraft['dimensions']['EV']['L'] - 13) / 13,          # L_h >= 13
+            #(0.5 - abs(aircraft['dimensions']['EV']['xm'] - aircraft['dimensions']['EH']['xm'])) / 0.5   # |x_EV - x_EH| <= 0.5m
         ]
 
         # truque pra colocar todas como negativas pra ser no formato do pymoo
@@ -156,17 +147,17 @@ references = dict(zip(reference_keys, reference_values))
 bounds = {
     'AR_w': [7, 12],
     'Sw': [80, 120],
-    'sweep_w': [0, 40], # degrees
+    'sweep_w': [20, 40], # degrees
     'Cht': [1.3, 1.6],
-    'xnlg': [1, 3],
-    'xmlg': [15, 17],
+    'xnlg': [2, 3],
+    'xmlg': [15, 20],
     'ymlg': [2, 6]
 }
 
 # Solve the optimization
 res = minimize(problem,
                algorithm,
-               ('n_gen', 200), # número de gerações - quantas vezes ele vai replicar
+               ('n_gen', 300), # número de gerações - quantas vezes ele vai replicar
                seed=1,
                verbose=True)
 
@@ -175,8 +166,8 @@ plt.rcParams['font.family'] = 'Segoe UI'  # Set font to Segoe UI
 sns.set_palette("Set2")
 
 plt.figure(figsize=(12, 5))
-sns.scatterplot(x=res.F[:,0], y=res.F[:,1], s=50)
-sns.lineplot(x=res.F[:,0], y=res.F[:,1])
+sns.scatterplot(x=res.F[:,0] * references['W0'], y=res.F[:,1] * references['Wf'], s=50, )
+#sns.lineplot(x=res.F[:,0] * references['W0'], y=res.F[:,1] * references['Wf'])
 
 # Sort the Pareto front by W0 (first objective) to get proper beginning, middle, end
 sorted_indices = np.argsort(res.F[:, 0])
@@ -184,13 +175,24 @@ n_points = len(sorted_indices)
 print(n_points)
 
 # Select beginning (min W0), middle, and end (max W0) points
-indices = [sorted_indices[0], sorted_indices[n_points//2], sorted_indices[-1]]
-pareto_points = ['Ponto A', 'Ponto B', 'Ponto C']
+indices = [sorted_indices[0], sorted_indices[n_points//3], sorted_indices[-1]]
+pareto_points = ['Mínimo Peso', 'Escolha Otimizada', 'Mínimo Combustível']
 
 colors = ['purple','red', 'orange']
 for i, idx in enumerate(indices):
-    plt.scatter(res.F[idx, 0], res.F[idx, 1], color=colors[i], s=50, zorder=5, marker= 'D', label=pareto_points[i])
-
+    sns.scatterplot(x=[res.F[idx, 0] * references['W0']], 
+                    y=[res.F[idx, 1] * references['Wf']], 
+                    color=colors[i], s=50, zorder=5, marker='o', label=pareto_points[i])
+    
+    if i == 1:
+        plt.annotate(pareto_points[i],             # O texto (ex: "Escolha Otimizada")
+                    (res.F[idx, 0] * references['W0'], res.F[idx, 1] * references['Wf']),               # A posição do ponto (x, y)
+                    textcoords="offset points",   
+                    xytext=(-30, 10),               
+                    ha='left',                    # Alinhamento horizontal (esquerda)
+                    fontsize=11,                  # Tamanho da fonte              # Negrito para destacar
+                    color=colors[i])              # Mesma cor do ponto
+    
 plt.xlabel(r'$W_0$', fontsize=14)
 plt.ylabel(r'$W_f$', fontsize=14)
 sns.despine()
@@ -199,13 +201,6 @@ plt.grid(True, alpha=0.3)
 plt.legend()
 plt.savefig('PRJ-23\\Otimização\\Resultados\\pareto_front.png', dpi=500)
 
-# Sort the Pareto front by W0 (first objective) to get proper beginning, middle, end
-sorted_indices = np.argsort(res.F[:, 0])
-n_points = len(sorted_indices)
-
-# Select beginning (min W0), middle, and end (max W0) points
-indices = [sorted_indices[0], sorted_indices[n_points//2], sorted_indices[-1]]
-pareto_points = ['Ponto A', 'Ponto B', 'Ponto C']
 
 # Create aircraft configurations for the 3 selected points
 aircraft_configs = []
@@ -250,18 +245,17 @@ for i, idx in enumerate(indices):
         'x_nlg': xnlg,
         'x_mlg': xmlg,
         'y_mlg': ymlg,
-        'W0': res.F[idx, 0],
-        'Wf': res.F[idx, 1]
+        'W0': res.F[idx, 0] * references['W0'],
+        'Wf': res.F[idx, 1] * references['Wf']
     })
     
-    print(f"{pareto_points[i]} Point - W0: {res.F[idx, 0]:.0f}, Wf: {res.F[idx, 1]:.0f}")
+    print(f"{pareto_points[i]} Point - W0: {res.F[idx, 0] * references['W0']:.0f}, Wf: {res.F[idx, 1] * references['Wf']:.0f}")
 
 
 pareto = pd.DataFrame(pareto_data)
 print("\nPareto Points Comparison:")
 print(pareto.round(3))
 
-# Save to Excel
 pareto.to_excel('PRJ-23\\Otimização\\Resultados\\pareto_points_comparison.xlsx', index=False)
 
 # Plot 3D views for the 3 selected points side by side, each compared to original
