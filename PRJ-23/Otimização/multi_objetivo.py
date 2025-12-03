@@ -17,31 +17,7 @@ import design_tools as dt
 import aux_tools as at
 from plot3d import plot3d
 
-# input fixed parameters
-gravity = 9.81
-W0_guess = 43090 * gravity
-T0_guess = 125600
 
-Mach_cruise = 0.75
-altitude_cruise = 11000
-range_cruise = 2390000.0
-
-Mach_altcruise = 0.4
-range_altcruise = 370000
-altitude_altcruise = 4572
-
-loiter_time = 2700
-
-altitude_takeoff = 0
-distance_takeoff = 1520
-TO_flap_def = 0.34906585039887
-TO_slat_def = 0
-
-altitude_landing = 0
-distance_landing = 1520
-LD_flap_def = 0.69813170079773
-LD_slat_def = 0
-MLW_frac = 0.84
 
 # EXECUTION
 
@@ -132,6 +108,36 @@ aircraft['dimensions'].update(new_dimensions)   # Atualiza as dimensões da aero
 
 original_aircraft = aircraft.copy()
 
+
+# input fixed parameters
+gravity = 9.81
+g = 9.81 # Aceleração da gravidade
+T0_guess = 125600 #Chute inicial
+W0_guess = 490000.0 #Chute inicial
+altitude_cruise = 11000.0000 #Carteado
+Mach_cruise = 0.7500000 #Range de 0.75 a 0.80
+range_cruise = 3700e3 # Req projeto
+range_altcruise = 370400 # 200 NM
+loiter_time = 2700.00000 # 45 minutos
+altitude_altcruise = 4572.00000 # Caso de testess
+Mach_altcruise = 0.40000000 #Carteado
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
+
+TO_flap_def = 20 * np.pi / 180 
+LD_flap_def = aircraft['data']['flap']['max_def']
+TO_slat_def = 0
+LD_slat_def = 0
+h_ground = 10.668
+altitude_cruise = 11000
+altitude_takeoff = 0.0
+altitude_landing = 0.0
+MLW_frac = 0.84
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
+
 # creating the references - from the reference group aircraft
 reference_keys = ['W0', 'Wf', 'We', 'deltaS_wlan', 'SM_fwd', 'SM_aft', 'b_tank_b_w', 'frac_nlg_fwd', 'frac_nlg_aft', 'alpha_tipback', 'alpha_tailstrike', 'phi_overturn']
 
@@ -145,10 +151,10 @@ references = dict(zip(reference_keys, reference_values))
 
 # Define design of the 7 variable bounds - dictonary of lists - [lower, upper]
 bounds = {
-    'AR_w': [7, 12],
+    'AR_w': [7.1, 14],
     'Sw': [80, 120],
-    'sweep_w': [20, 40], # degrees
-    'Cht': [1.3, 1.6],
+    'sweep_w': [10, 30], # degrees
+    'Cht': [1.57, 1.8],
     'xnlg': [2, 3],
     'xmlg': [15, 20],
     'ymlg': [2, 6]
@@ -175,8 +181,8 @@ n_points = len(sorted_indices)
 print(n_points)
 
 # Select beginning (min W0), middle, and end (max W0) points
-indices = [sorted_indices[0], sorted_indices[n_points//3], sorted_indices[-1]]
-pareto_points = ['Mínimo Peso', 'Escolha Otimizada', 'Mínimo Combustível']
+indices = [sorted_indices[0], sorted_indices[n_points//2], sorted_indices[-1]]
+pareto_points = ['Mínimo Peso', 'Escolha de Otimização', 'Mínimo Combustível']
 
 colors = ['purple','red', 'orange']
 for i, idx in enumerate(indices):

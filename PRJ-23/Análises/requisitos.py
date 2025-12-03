@@ -11,13 +11,13 @@ from plot3d import plot3d
 aircraft = dt.my_aircraft()
 
 # Updated aircraft parameters - review
-aircraft['geo_param']['wing']['AR'] = 8.585856
-aircraft['geo_param']['wing']['S'] = 82.913206
-aircraft['geo_param']['wing']['sweep'] = 0.349066
-aircraft['geo_param']['EH']['Cht'] = 1.300000 
-aircraft['dimensions']['ldg']['xnlg'] = 2.808354 
-aircraft['dimensions']['ldg']['xmlg'] = 16.832371
-aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
+# aircraft['geo_param']['wing']['AR'] = 8.585856
+# aircraft['geo_param']['wing']['S'] = 82.913206
+# aircraft['geo_param']['wing']['sweep'] = 0.349066
+# aircraft['geo_param']['EH']['Cht'] = 1.300000 
+# aircraft['dimensions']['ldg']['xnlg'] = 2.808354 
+# aircraft['dimensions']['ldg']['xmlg'] = 16.832371
+# aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
 
 
 new_dimensions = dt.geometry(aircraft)
@@ -53,7 +53,7 @@ g = 9.81 # Aceleração da gravidade
 T0_guess = 125600 #Chute inicial
 W0_guess = 490000.0 #Chute inicial
 altitude_cruise = 11000.0000 #Carteado
-Mach_cruise = 0.7700000 #Range de 0.75 a 0.80
+Mach_cruise = 0.7500000 #Range de 0.75 a 0.80
 range_cruise = 3700e3 # Req projeto
 range_altcruise = 370400 # 200 NM
 loiter_time = 2700.00000 # 45 minutos

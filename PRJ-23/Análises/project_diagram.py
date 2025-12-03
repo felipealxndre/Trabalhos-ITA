@@ -11,12 +11,12 @@ import aux_tools as at
 
 aircraft = dt.my_aircraft() #Define a aeronave padrão.
 
-aircraft['geo_param']['wing']['AR'] = 8.585856
-aircraft['geo_param']['wing']['S'] = 82.913206
-aircraft['geo_param']['wing']['sweep'] = 0.349066
+aircraft['geo_param']['wing']['AR'] = 9.484510
+aircraft['geo_param']['wing']['S'] = 96.696941
+aircraft['geo_param']['wing']['sweep'] = 0.296706
 aircraft['geo_param']['EH']['Cht'] = 1.300000 
-aircraft['dimensions']['ldg']['xnlg'] = 2.808354 
-aircraft['dimensions']['ldg']['xmlg'] = 16.832371
+aircraft['dimensions']['ldg']['xnlg'] = 2.801796             
+aircraft['dimensions']['ldg']['xmlg'] = 17.003748
 aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
 
 
@@ -30,7 +30,7 @@ g = 9.81 # Aceleração da gravidade
 T0_guess = 125600 #Chute inicial
 W0_guess = 490000.0 #Chute inicial
 altitude_cruise = 11000.0000 #Carteado
-Mach_cruise = 0.7700000 #Range de 0.75 a 0.80
+Mach_cruise = 0.7500000 #Range de 0.75 a 0.80
 range_cruise = 3700e3 # Req projeto
 range_altcruise = 370400 # 200 NM
 loiter_time = 2700.00000 # 45 minutos
@@ -45,21 +45,6 @@ LD_flap_def = aircraft['data']['flap']['max_def']
 TO_slat_def = 0
 LD_slat_def = 0
 h_ground = 10.668
-altitude_cruise = 11000
-altitude_takeoff = 0.0
-altitude_landing = 0.0
-MLW_frac = 0.84
-
-# Pista de decolagem e pouso
-distance_takeoff = 1800.0 #Req projeto
-distance_landing = 1150.0 # Req projeto
-
-#Parametros carteados
-TO_flap_def = 20 * np.pi / 180 
-LD_flap_def = aircraft['data']['flap']['max_def']
-TO_slat_def = 0
-LD_slat_def = 0
-h_ground = 35.0*0.3048
 altitude_cruise = 11000
 altitude_takeoff = 0.0
 altitude_landing = 0.0
@@ -82,7 +67,7 @@ print(f'S_wlan = {S_req} m²') # Área da asa de pouso necessária
 
 # Variação da área da asa 
 
-Sw_range = np.linspace(90.0, 130.0, 100) # Faixa de valores para Sw
+Sw_range = np.linspace(85.0, 115.0, 100) # Faixa de valores para Sw
 Swlan_range = np.zeros(len(Sw_range)) # Inicializa o vetor de área da asa de pouso
 #wing_charge = np.zeros(len(Sw_range)) # Inicializa o vetor de carga alar
 T0vec_range = np.zeros((len(Sw_range),len(T0vec))) # Inicializa o vetor de T0

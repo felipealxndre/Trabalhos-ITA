@@ -27,7 +27,7 @@ condicoes_voo = {
 S = aircraft['geo_param']['wing']['S']         # Área da asa (m²)
 c = aircraft['dimensions']['wing']['cm']       # Corda média aerodinâmica 
 
-CL_max = 1.38171                               # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
+CL_max = 1.696341                               # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
 CL_min = -0.5                                  # Coeficiente de sustentação máximo negativo (CL,min)- Lab 4
 a      = 7.461304                              # dCL/dalpha [em radianos] - Lab 4
 
