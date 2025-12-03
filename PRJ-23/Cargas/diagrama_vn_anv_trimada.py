@@ -27,10 +27,9 @@ condicoes_voo = {
 S = aircraft['geo_param']['wing']['S']         # Área da asa (m²)
 c = aircraft['dimensions']['wing']['cm']       # Corda média aerodinâmica 
 
-CL_max = 1.30161                               # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
+CL_max = 1.38171                               # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
 CL_min = -0.5                                  # Coeficiente de sustentação máximo negativo (CL,min)- Lab 4
-a      = 7.35940                               # dCL/dalpha [em radianos] - Lab 4
-
+a      = 7.461304                              # dCL/dalpha [em radianos] - Lab 4
 
 def calcular_Ude(W):
     """
@@ -131,6 +130,12 @@ def plot_envelope_combinado(titulo,
 
     plt.figure(figsize=(14, 9))
 
+    # Converter velocidades para nós
+    V_es_kt = V_es * MPS_TO_KT
+    V_eA_kt = V_eA * MPS_TO_KT
+    V_eC_kt = V_eC * MPS_TO_KT
+    V_eD_kt = V_eD * MPS_TO_KT
+
     # 1) Vs- (velocidade onde estol negativo atinge n_limit_neg, limitada por VD)
     try:
         V_neg_intersect = V_es * math.sqrt(abs(n_limit_neg) / abs(CL_min / CL_max))
@@ -138,26 +143,29 @@ def plot_envelope_combinado(titulo,
     except:
         V_neg_intersect = V_eD
     
-    # 2) Curvas de estol em VE (para visualização)
-    v_pos_stall = np.linspace(0, V_eA, 200)
-    n_pos_stall = (v_pos_stall / V_es) ** 2
+    V_neg_intersect_kt = V_neg_intersect * MPS_TO_KT
+    V_es_neg_kt = V_es_kt * math.sqrt(abs(n_limit_neg) / abs(CL_min / CL_max))
     
-    v_neg_stall = np.linspace(0, V_neg_intersect, 200)
-    n_neg_stall = (CL_min / CL_max) * (v_neg_stall / V_es) ** 2
+    # 2) Curvas de estol em VE (para visualização) - em nós
+    v_pos_stall = np.linspace(0, V_eA_kt, 200)
+    n_pos_stall = (v_pos_stall / V_es_kt) ** 2
+    
+    v_neg_stall = np.linspace(0, V_neg_intersect_kt, 200)
+    n_neg_stall = (CL_min / CL_max) * (v_neg_stall / V_es_kt) ** 2
     
     plt.plot(v_pos_stall, n_pos_stall, 'b-.', linewidth=2, label='Estol')
     plt.plot(v_neg_stall, n_neg_stall, 'b-.', linewidth=2)
 
     # 3) Limites estruturais (manobra)
-    plt.hlines(n_limit_pos, V_eA, V_eD, colors='red', linestyles='-.',
+    plt.hlines(n_limit_pos, V_eA_kt, V_eD_kt, colors='red', linestyles='-.',
                linewidth=2.5, label='Limite Estrutural')
-    plt.hlines(n_limit_neg, V_neg_intersect, V_eD, colors='red',
+    plt.hlines(n_limit_neg, V_neg_intersect_kt, V_eD_kt, colors='red',
                linestyles='-.', linewidth=2.5)
-    plt.vlines(V_eD, n_limit_neg, n_limit_pos, colors='red',
+    plt.vlines(V_eD_kt, n_limit_neg, n_limit_pos, colors='red',
                linestyles='-.', linewidth=2.5)
     
     # 4) Envelope de rajada (linhas verdes principais – ligando 0–VC–VD)
-    V_gust = np.array([0.0, V_eC, V_eD])
+    V_gust = np.array([0.0, V_eC_kt, V_eD_kt])
     n_gust_pos = np.array([1.0, n_C, n_D])
     n_gust_neg = np.array([1.0, 2.0 - n_C, 2.0 - n_D])
 
@@ -165,9 +173,9 @@ def plot_envelope_combinado(titulo,
     plt.plot(V_gust, n_gust_neg, "g-.", linewidth=2)
 
     # Linhas tracejadas verdes retas de (0,1) até (VD, n_D) e (VD, 2-n_D)
-    V_gust_full = np.linspace(0, V_eD, 200)
-    n_gust_pos_line = 1 + (n_D - 1) * (V_gust_full / V_eD)
-    n_gust_neg_line = 1 + (1 - n_D) * (V_gust_full / V_eD)
+    V_gust_full = np.linspace(0, V_eD_kt, 200)
+    n_gust_pos_line = 1 + (n_D - 1) * (V_gust_full / V_eD_kt)
+    n_gust_neg_line = 1 + (1 - n_D) * (V_gust_full / V_eD_kt)
 
     plt.plot(V_gust_full, n_gust_pos_line, "g-.", linewidth=2, alpha=0.8)
     plt.plot(V_gust_full, n_gust_neg_line, "g-.", linewidth=2, alpha=0.8)
@@ -177,30 +185,47 @@ def plot_envelope_combinado(titulo,
     plt.axhline(0, color="black", linewidth=0.5)
 
     # Marcações de Vs, VA, VC e VD (linhas verticais + texto)
-    plt.axvline(V_es, color="purple", linestyle=":", alpha=0.5)
-    plt.axvline(V_eA, color="purple", linestyle=":", alpha=0.5)
-    plt.axvline(V_eC, color="purple", linestyle=":", alpha=0.5)
-    plt.axvline(V_eD, color="purple", linestyle=":", alpha=0.5)
+    plt.axvline(V_es_kt, color="purple", linestyle=":", alpha=0.5)
+    plt.axvline(V_es_neg_kt, color="purple", linestyle=":", alpha=0.5)
+    plt.axvline(V_eA_kt, color="purple", linestyle=":", alpha=0.5)
+    plt.axvline(V_eC_kt, color="purple", linestyle=":", alpha=0.5)
+    plt.axvline(V_eD_kt, color="purple", linestyle=":", alpha=0.5)
     
-    plt.text(V_es, n_limit_neg, f'$V_S$ = {V_es:.1f} m/s',
-             ha="center", fontsize=12, color="purple",
-             bbox=dict(facecolor='white', edgecolor='none', alpha=0.9))
-    plt.text(V_eA, n_limit_neg, f'$V_A$ = {V_eA:.1f} m/s',
-             ha="center", fontsize=12, color="purple",
-             bbox=dict(facecolor='white', edgecolor='none', alpha=0.9))
-    plt.text(V_eC, n_limit_neg, f'$V_C$ = {V_eC:.1f} m/s',
-             ha="center", fontsize=12, color="purple",
-             bbox=dict(facecolor='white', edgecolor='none', alpha=0.9))
-    plt.text(V_eD, n_limit_neg, f'$V_D$ = {V_eD:.1f} m/s',
-             ha="center", fontsize=12, color="purple",
-             bbox=dict(facecolor='white', edgecolor='none', alpha=0.9))
+    # Labels simples nas linhas verticais
+    plt.text(V_es_kt, n_limit_pos + 0.05, '$V_{S,1g}$',
+             ha="left", fontsize=14, color="purple")
+    plt.text(V_es_neg_kt, n_limit_pos + 0.05, '$V_{S,neg}$',
+             ha="left", fontsize=14, color="purple")
+    plt.text(V_eA_kt, n_limit_pos + 0.05, '$V_A$',
+             ha="left", fontsize=14, color="purple")
+    plt.text(V_eC_kt, n_limit_pos + 0.05, '$V_C$',
+             ha="left", fontsize=14, color="purple")
+    plt.text(V_eD_kt, n_limit_pos + 0.05, '$V_D$',
+             ha="left", fontsize=14, color="purple")
+
+    # Bloco de texto com os valores das velocidades
+    texto_velocidades = (
+        f'$V_{{S,1g}}$ = {V_es_kt:.1f} kt\n'
+        f'$V_{{S,neg}}$ = {V_neg_intersect_kt:.1f} kt\n'
+        f'$V_A$ = {V_eA_kt:.1f} kt\n'
+        f'$V_C$ = {V_eC_kt:.1f} kt\n'
+        f'$V_D$ = {V_eD_kt:.1f} kt\n'
+        f'$n_{{C, gust}}$ = {n_C:.3f}\n'
+        f'$n_{{D, gust}}$ = {n_D:.3f}'
+    )
+    
+    plt.text(0.02, 0.98, texto_velocidades,
+             transform=plt.gca().transAxes,
+             fontsize=14,
+             verticalalignment='top',
+             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
 
     # -----------------------------
     # ENVELOPE EM PRETO
     # -----------------------------
 
-    # Grid de velocidade para o envelope
-    V_env = np.linspace(V_es, V_eD, 400)
+    # Grid de velocidade para o envelope (em nós)
+    V_env = np.linspace(V_es_kt, V_eD_kt, 400)
 
     # Rajadas interpoladas (usadas para recorte do envelope)
     gust_pos_interp = np.interp(V_env, V_gust, n_gust_pos)
@@ -211,23 +236,23 @@ def plot_envelope_combinado(titulo,
 
     for i, V in enumerate(V_env):
         # Estol positivo
-        n_stall_pos = (V / V_es)**2
+        n_stall_pos = (V / V_es_kt)**2
 
         # TOPO DO ENVELOPE
-        if V <= V_eA:
+        if V <= V_eA_kt:
             n_top[i] = n_stall_pos
-        elif V <= V_eC:
+        elif V <= V_eC_kt:
             n_top[i] = max(n_limit_pos, gust_pos_interp[i])
         else:
             n_top[i] = max(n_limit_pos, gust_pos_interp[i])
 
         # FUNDO DO ENVELOPE
-        if V <= V_neg_intersect:
+        if V <= V_neg_intersect_kt:
             n_bottom[i] = 0.0
-        elif V <= V_eC:
+        elif V <= V_eC_kt:
             n_bottom[i] = min(n_limit_neg, gust_neg_interp[i])
         else:
-            n_struct = n_limit_neg + (0.0 - n_limit_neg) * (V - V_eC) / (V_eD - V_eC)
+            n_struct = n_limit_neg + (0.0 - n_limit_neg) * (V - V_eC_kt) / (V_eD_kt - V_eC_kt)
             n_bottom[i] = min(n_struct, gust_neg_interp[i])
 
     # curvas contínuas do envelope
@@ -238,23 +263,24 @@ def plot_envelope_combinado(titulo,
     # curvas verticais em Vs, Vs- e VD para fechar o contorno visualmente
 
     # vertical em Vs: de 0 até 1
-    plt.plot([V_es, V_es], [0.0, 1.0], color="black", linewidth=2)
+    plt.plot([V_es_kt, V_es_kt], [0.0, 1.0], color="black", linewidth=2)
 
     # vertical em Vs-: de 0 até n_limit_neg
-    plt.plot([V_neg_intersect, V_neg_intersect],
+    plt.plot([V_neg_intersect_kt, V_neg_intersect_kt],
              [0.0, n_limit_neg], color="black", linewidth=2)
 
     # vertical em VD: de n_bottom(VD) até n_top(VD)
-    plt.plot([V_eD, V_eD],
+    plt.plot([V_eD_kt, V_eD_kt],
              [n_bottom[-1], n_top[-1]], color="black", linewidth=2)
 
-    plt.xlabel("Velocidade Equivalente, $V_e$ (m/s)", fontsize=13)
-    plt.ylabel("Fator de Carga, $n$", fontsize=13)
-    plt.title(f'Diagrama V-n Combinado\n{titulo}', fontsize=16, fontweight='bold')
-    plt.xlim(0, V_eD * 1.1)
+    plt.xlabel("Velocidade Equivalente, $V_e$ (kt)", fontsize=16, fontweight='bold')
+    plt.ylabel("Fator de Carga, $n$", fontsize=16, fontweight='bold')
+    plt.title(f'Diagrama V-n\n{titulo}', fontsize=18, fontweight='bold')
+    plt.xlim(0, V_eD_kt * 1.1)
     # plt.ylim(n_limit_neg - 0.5, n_limit_pos + 0.5)
     plt.grid(True, alpha=0.3)
-    plt.legend(loc='best', fontsize=10)
+    plt.legend(loc='best', fontsize=14)
+    plt.tick_params(axis='both', which='major', labelsize=14)
 
     plt.tight_layout()
     plt.savefig(f"Cargas/Diagrama_vn_{titulo.replace(' ', '_').lower()}.png", dpi=300)
@@ -292,7 +318,11 @@ def rodar_caso(W, rho_key, titulo):
     # print dos pontos principais
     print(f"\n=== {titulo} ===")
     print(f"  rho  = {rho_ar:.4f} kg/m³")
+    
+    V_es_neg_kt = V_es_kt * math.sqrt(abs(n_limit_neg) / abs(CL_min / CL_max))
+    
     print(f"  V_S  = {V_es:.2f} m/s  ({V_es_kt:.1f} kt)")
+    print(f"  V_S- = {V_es * math.sqrt(abs(n_limit_neg) / abs(CL_min / CL_max)):.2f} m/s  ({V_es_neg_kt:.1f} kt)")
     print(f"  V_A  = {V_eA:.2f} m/s  ({V_eA_kt:.1f} kt)")
     print(f"  V_C  = {V_eC:.2f} m/s  ({V_eC_kt:.1f} kt)")
     print(f"  V_D  = {V_eD:.2f} m/s  ({V_eD_kt:.1f} kt)")
@@ -349,8 +379,25 @@ pesos = dt.analyze(
 
 MTOW      = pesos[0]            # peso máximo de decolagem
 MZFW      = pesos[0] - pesos[1] # peso máximo sem combustível
-W_projeto = 39071.40 * g       # ponto de projeto - cruzeiro típico
 
+# Regional TBP's 
+# Roskam
+W_frac_engine_start = 0.990
+W_frac_taxi = 0.990  
+W_frac_take_off = 0.995 
+W_frac_climb = 0.98 
+
+frac_pre_cruise = (
+    W_frac_engine_start *
+    W_frac_taxi *
+    W_frac_take_off *
+    W_frac_climb 
+)
+
+W_cruise = MTOW * frac_pre_cruise
+W_projeto = W_cruise
+
+MLW = MTOW * MLW_frac
 
 # ----------------------------------------
 # Casos
@@ -359,4 +406,4 @@ W_projeto = 39071.40 * g       # ponto de projeto - cruzeiro típico
 rodar_caso(MTOW,      'Sea Level', "MTOW @ Nível do Mar")
 rodar_caso(MZFW,      'Sea Level', "MZFW @ Nível do Mar")
 rodar_caso(W_projeto, '10000',     "Peso de Cruzeiro @ 10000 ft")
-rodar_caso(W_projeto, '35000',     "Peso de Cruzeiro @ 35000 ft")
+rodar_caso(MLW,       '10000',     "MLW @ 10000 ft")
