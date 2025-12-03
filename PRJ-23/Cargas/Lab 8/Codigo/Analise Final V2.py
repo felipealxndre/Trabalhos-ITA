@@ -181,9 +181,8 @@ f_W = interp1d(y_vals, W_prime, kind='linear', fill_value="extrapolate")
 W_aug = f_W(y_augmented)
 
 # =============================================================================
-# 6. PLOTAGEM
+# 6. PLOTS
 # =============================================================================
-print("\n--- GERANDO 3 GRÁFICOS SEPARADOS (V2 - DEGRAU CORRIGIDO) ---")
 
 # Plot 1: Distribuições
 plt.figure(1, figsize=(10, 6))

@@ -14,10 +14,10 @@ gravity = 9.81
 # USAR ESSE
 def my_aircraft():
     # Defining general geometric parameters
-    wing = {'S': 105.5, #Otimizado para fornecer tração mínima
-            'AR':10.2, #Otimizar no acompanhamento
+    wing = {'S': 82.913206, #Otimizado para fornecer tração mínima
+            'AR':8.585856, #Otimizar no acompanhamento
             'taper':0.3, #Dados históricos
-            'sweep':23*np.pi/180,  #Otimizar no acompanhamento
+            'sweep':20*np.pi/180,  #Otimizar no acompanhamento
             'dihedral':4*np.pi/180, #Carteado
             'xr':11.6, #Posição da asa
             'zr':-3.42/2, #Altura da asa
@@ -25,29 +25,28 @@ def my_aircraft():
             'tct': 0.096,
             'c_tank_c_w': 0.4,
             'x_tank_c_w': 0.2}
+
     
-    
-    # e175
-    
-    EH  =  {'Cht': 1.54,
-    		'AR':4.30,
-    		'taper':0.50,
-    		'sweep':24*np.pi/180,
-    		'dihedral':8*np.pi/180,
-    		'Lc':4.83, # não mexi
-    		'zr':0.0,
-    		'tcr': 0.1,
-    		'tct': 0.1,
-    		'eta': 1.0}
-    
-    EV  =  {'Cvt':0.12,
-    		'AR':1.89,
-    		'taper':0.41,
-    		'sweep':30*np.pi/180,
-    		'Lb':0.55,
-    		'zr':0.0,
-    		'tcr': 0.1,
-    		'tct': 0.1}
+    EH  =  {'Cht':1.30,
+            'AR':4.3,
+            'taper':0.5,
+            'sweep':24*np.pi/180,
+            'dihedral':8*np.pi/180, 
+            'Lc':4.1,
+            'zr':1.0318, # na verdade 1.0318
+            'tcr': 0.1,
+            'tct': 0.1,
+            'eta': 1.0}
+   
+   
+    EV  =  {'Cvt':0.1,
+                'AR':1.89,
+                'taper':0.41, 
+                'sweep':30*np.pi/180, 
+                'Lb':0.51,
+                'zr':1.4968, # na verdade 1.4968
+                'tcr': 0.1,
+                'tct': 0.1}
 
 
     geo_param = {'wing':wing,
@@ -109,9 +108,9 @@ def my_aircraft():
    
     aircraft['dimensions']['nacelle'] = nacelle
    
-    ldg = {'xnlg': 2.8,
-           'xmlg': 16.3,
-           'ymlg': 2.47,
+    ldg = {'xnlg': 2.808354,
+           'xmlg': 16.832371,
+           'ymlg': 2.470000,
            'z': -3.67}
    
     aircraft['dimensions']['ldg'] = ldg
