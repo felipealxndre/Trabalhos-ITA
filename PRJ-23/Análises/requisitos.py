@@ -11,13 +11,13 @@ from plot3d import plot3d
 aircraft = dt.my_aircraft()
 
 # Updated aircraft parameters - review
-# aircraft['geo_param']['wing']['AR'] = 9.151089
-# aircraft['geo_param']['wing']['S'] = 99.033744
-# aircraft['geo_param']['wing']['sweep'] = 0.230809
-# aircraft['geo_param']['EH']['Cht'] = 0.900003
-# aircraft['dimensions']['ldg']['xnlg'] = 1.0
-# aircraft['dimensions']['ldg']['xmlg'] = 15.610284
-# aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
+aircraft['geo_param']['wing']['AR'] = 8.585856
+aircraft['geo_param']['wing']['S'] = 82.913206
+aircraft['geo_param']['wing']['sweep'] = 0.349066
+aircraft['geo_param']['EH']['Cht'] = 1.300000 
+aircraft['dimensions']['ldg']['xnlg'] = 2.808354 
+aircraft['dimensions']['ldg']['xmlg'] = 16.832371
+aircraft['dimensions']['ldg']['ymlg'] = 2.470000 
 
 
 new_dimensions = dt.geometry(aircraft)
@@ -48,25 +48,29 @@ g = 9.81
 # h_ground = 10.668
 # MLW_frac = 0.84
 
-W0_guess = 422712.90000000002328
-T0_guess = 125600
-TO_flap_def = 0.34906585039887
-LD_flap_def = 0.69813170079773
-TO_slat_def = 0.0
-LD_slat_def = 0.0
+gravity = 9.81
+g = 9.81 # Aceleração da gravidade
+T0_guess = 125600 #Chute inicial
+W0_guess = 490000.0 #Chute inicial
+altitude_cruise = 11000.0000 #Carteado
+Mach_cruise = 0.7700000 #Range de 0.75 a 0.80
+range_cruise = 3700e3 # Req projeto
+range_altcruise = 370400 # 200 NM
+loiter_time = 2700.00000 # 45 minutos
+altitude_altcruise = 4572.00000 # Caso de testess
+Mach_altcruise = 0.40000000 #Carteado
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
+
+TO_flap_def = 20 * np.pi / 180 
+LD_flap_def = aircraft['data']['flap']['max_def']
+TO_slat_def = 0
+LD_slat_def = 0
 h_ground = 10.668
 altitude_cruise = 11000
-Mach_cruise = 0.77
-range_cruise = 3700e3
-
-loiter_time = 45*60
-altitude_altcruise = 4572
-Mach_altcruise = 0.4
-range_altcruise = 200*1852
 altitude_takeoff = 0.0
-distance_takeoff = 1800
 altitude_landing = 0.0
-distance_landing = 1150
 MLW_frac = 0.84
 
 

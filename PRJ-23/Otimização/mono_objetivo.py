@@ -21,33 +21,6 @@ from plot3d import plot3d
 
 warnings.filterwarnings("ignore")
 
-# input fixed parameters
-gravity = 9.81
-W0_guess = 43090 * gravity
-T0_guess = 125600
-
-Mach_cruise = 0.75
-altitude_cruise = 11000
-range_cruise = 2390000.0
-
-Mach_altcruise = 0.4
-range_altcruise = 370000
-altitude_altcruise = 4572
-
-loiter_time = 2700
-
-altitude_takeoff = 0
-distance_takeoff = 1520
-TO_flap_def = 0.34906585039887
-TO_slat_def = 0
-
-altitude_landing = 0
-distance_landing = 1520
-LD_flap_def = 0.69813170079773
-LD_slat_def = 0
-MLW_frac = 0.84
-
-
 
 # EXECUTION
 
@@ -188,6 +161,35 @@ aircraft['dimensions'].update(new_dimensions)   # Atualiza as dimensões da aero
 
 original_aircraft = copy.deepcopy(aircraft)  # Use deepcopy instead of copy
 
+
+gravity = 9.81
+g = 9.81 # Aceleração da gravidade
+T0_guess = 125600 #Chute inicial
+W0_guess = 490000.0 #Chute inicial
+altitude_cruise = 11000.0000 #Carteado
+Mach_cruise = 0.7500000 #Range de 0.75 a 0.80
+range_cruise = 3700e3 # Req projeto
+range_altcruise = 370400 # 200 NM
+loiter_time = 2700.00000 # 45 minutos
+altitude_altcruise = 4572.00000 # Caso de testess
+Mach_altcruise = 0.40000000 #Carteado
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
+
+TO_flap_def = 20 * np.pi / 180 
+LD_flap_def = aircraft['data']['flap']['max_def']
+TO_slat_def = 0
+LD_slat_def = 0
+h_ground = 10.668
+altitude_cruise = 11000
+altitude_takeoff = 0.0
+altitude_landing = 0.0
+MLW_frac = 0.84
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
+
 # creating the references - from the reference group aircraft
 reference_keys = ['W0', 'Wf', 'We', 'deltaS_wlan', 'SM_fwd', 'SM_aft', 'b_tank_b_w', 'frac_nlg_fwd', 'frac_nlg_aft', 'alpha_tipback', 'alpha_tailstrike', 'phi_overturn']
 
@@ -206,9 +208,9 @@ pprint(references)
 
 # Define design of the 7 variable bounds - dictonary of lists - [lower, upper]
 bounds = {
-    'AR_w': [7, 12],
+    'AR_w': [7.1, 12],
     'Sw': [80, 120],
-    'sweep_w': [20, 40], # degrees
+    'sweep_w': [17, 30], # degrees
     'Cht': [1.3, 1.6],
     'xnlg': [2, 3],
     'xmlg': [15, 20],
@@ -300,7 +302,7 @@ fig_3d.savefig('PRJ-23\\Otimização\\Resultados\\3dplot.png', dpi=500)
 # Plot optimization history
 plt.style.use('default')
 plt.rcParams['font.family'] = 'Segoe UI'  # Set font to Segoe UI
-sns.set_palette("Set2")
+#sns.set_palette("Set2")
 
 # Plot 1: Design variables
 fig1, ax1 = plt.subplots(figsize=(12, 6))
@@ -344,7 +346,7 @@ constraint_labels = [
     r'$y_{mlg} \leq 4.5m$',
     r'$z_{tv} - z_{mlg} \leq 13.5m$',
     r'$L_h \geq 13m$',
-    r'$|x_{EV} - x_{EH}| \leq 0.5m$'
+    # r'$|x_{EV} - x_{EH}| \leq 0.5m$'
 ]
 
 for i in range(garray.shape[1]):
@@ -357,3 +359,9 @@ ax3.grid(True, alpha=0.3)
 sns.despine()
 plt.tight_layout()
 plt.savefig('PRJ-23\\Otimização\\Resultados\\constraints_history.png', dpi=500)
+
+
+
+print('Restrições finais desnormalizadas: ')
+print(f'Delta S_wlan: {confun(Xopt)[0]* references["deltaS_wlan"]}')
+pprint(confun(Xopt))

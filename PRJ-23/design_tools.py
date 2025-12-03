@@ -81,7 +81,7 @@ def my_aircraft():
     aircraft = {'geo_param':geo_param}
    
     flap = {'max_def': 40 * np.pi/180,
-            'type': 'double slotted', #Carteado
+            'type': 'triple slotted', #Carteado
             'c_flap_c_wing': 1.3,
             'b_flap_b_wing': 0.5,}
    
