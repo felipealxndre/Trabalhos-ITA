@@ -20,12 +20,11 @@ c_mac = aircraft['dimensions']['wing']['cm']
 b_span = aircraft['dimensions']['wing']['b']
 taper_ratio = aircraft['geo_param']['wing']['taper']
 
-x_cg = 14.30805
 x_ac_w = aircraft['dimensions']['wing']['xm'] + 0.25 * aircraft['dimensions']['wing']['cm']
 x_ac_h = aircraft['dimensions']['EH']['xm'] + 0.25 * aircraft['dimensions']['EH']['cm']
 
 rho_SL = 1.2250
-rho_10000 = 0.9492
+rho_11000 = 0.9217
 
 def compute_Cm_acw_from_avl(filename, S_ref, c_mac):
     y_list, chord_list, area_list, cm_c4_list = [], [], [], []
@@ -113,6 +112,8 @@ W0_weight, We_weight, Wf_weight, Mf_cruise_w, xcg_e_weight, weightsvec = dt.weig
     loiter_time,
     altitude_altcruise, Mach_altcruise, range_altcruise
 )
+
+x_cg = aircraft['weights']['xcg_fwd']
 
 # Peso estrutural da asa (W_w)
 W_wing_struct = weightsvec[0]
@@ -298,10 +299,10 @@ def calcular_caso(W_case, n_case, V_case, rho_case, nome):
 # =============================================================================
 
 casos = [
-    ("MTOW @ Nível do Mar", MTOW, 2.782, 255.20, rho_SL),
-    ("MZFW @ Nível do Mar", MZFW, 3.396, 255.20, rho_SL),
-    ("Peso de Cruzeiro @ 10000 ft", W_cruise, 2.661, 216.78, rho_10000),
-    ("MLW @ 10000 ft", MLW, 2.969, 216.78, rho_10000),
+    ("MTOW @ Nível do Mar", MTOW, 3.232, 255.20, rho_SL),
+    ("MZFW @ Nível do Mar", MZFW, 3.898, 255.20, rho_SL),
+    ("Peso de Cruzeiro @ 11000 ft", W_cruise, 3.053, 212.83, rho_11000),
+    ("MLW @ 11000 ft", MLW, 3.406, 212.83, rho_11000),
 ]
 
 # Calcular e armazenar todos os resultados

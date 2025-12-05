@@ -142,5 +142,5 @@ plt.legend(
 )
 
 plt.grid(True)
-plt.savefig('PRJ-23\\Resultados\\prjdiagram.png')
+plt.savefig('Resultados/prjdiagram.png')
 
