@@ -27,9 +27,9 @@ condicoes_voo = {
 S = aircraft['geo_param']['wing']['S']         # Área da asa (m²)
 c = aircraft['dimensions']['wing']['cm']       # Corda média aerodinâmica 
 
-CL_max = 1.696341                              # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
+CL_max = 1.5078                                # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
 CL_min = -0.5                                  # Coeficiente de sustentação máximo negativo (CL,min)- Lab 4
-a      = 7.461304                              # dCL/dalpha [em radianos] - Lab 4
+a      = 7.385                                 # dCL/dalpha [em radianos] - Lab 4
 
 def calcular_Ude(W):
     """
@@ -392,15 +392,11 @@ MTOW      = pesos[0]            # peso máximo de decolagem
 MZFW      = pesos[0] - pesos[1] # peso máximo sem combustível
 
 # Regional TBP's 
-# Roskam
-W_frac_engine_start = 0.990
-W_frac_taxi = 0.990  
+# Roskam 
 W_frac_take_off = 0.995 
 W_frac_climb = 0.98 
 
 frac_pre_cruise = (
-    W_frac_engine_start *
-    W_frac_taxi *
     W_frac_take_off *
     W_frac_climb 
 )

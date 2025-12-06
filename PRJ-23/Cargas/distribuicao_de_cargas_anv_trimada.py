@@ -299,10 +299,10 @@ def calcular_caso(W_case, n_case, V_case, rho_case, nome):
 # =============================================================================
 
 casos = [
-    ("MTOW @ Nível do Mar", MTOW, 3.232, 255.20, rho_SL),
-    ("MZFW @ Nível do Mar", MZFW, 3.898, 255.20, rho_SL),
-    ("Peso de Cruzeiro @ 11000 ft", W_cruise, 3.053, 212.83, rho_11000),
-    ("MLW @ 11000 ft", MLW, 3.406, 212.83, rho_11000),
+    ("MTOW @ Nível do Mar", MTOW, 2.5, 108.88, rho_SL),
+    ("MZFW @ Nível do Mar", MZFW, 2.854, 164.62, rho_SL),
+    ("Peso de Cruzeiro @ 11000 ft", W_cruise, 2.574, 164.62, rho_11000),
+    ("MLW @ 11000 ft", MLW, 2.845, 164.62, rho_11000),
 ]
 
 # Calcular e armazenar todos os resultados

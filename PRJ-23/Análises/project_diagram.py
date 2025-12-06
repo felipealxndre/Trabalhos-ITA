@@ -6,7 +6,7 @@ from scipy.stats import linregress
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-import design_tools as dt
+import design_tools_optmized as dt
 import aux_tools as at
 
 aircraft = dt.my_aircraft() #Define a aeronave padrão.
