@@ -20,16 +20,16 @@ g = 9.80665
 # (rho, T) para cada condição
 condicoes_voo = {
     'Sea Level': (atmosphere(z=0, Tba=288.15)[2], 288.15),
-    '10000':     (atmosphere(z=10000 * 0.3048, Tba=268.34)[2], 268.34),
+    '11000':     (atmosphere(z=11000 * 0.3048, Tba=266.36)[2], 266.36),
     '35000':     (atmosphere(z=35000 * 0.3048, Tba=218.8)[2], 218.8),
 }
 
 S = aircraft['geo_param']['wing']['S']         # Área da asa (m²)
 c = aircraft['dimensions']['wing']['cm']       # Corda média aerodinâmica 
 
-CL_max = 1.696341                               # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
+CL_max = 1.5078                                # Coeficiente de sustentação máximo (CL,max) - AVL Lab 4
 CL_min = -0.5                                  # Coeficiente de sustentação máximo negativo (CL,min)- Lab 4
-a      = 7.461304                              # dCL/dalpha [em radianos] - Lab 4
+a      = 7.385                                 # dCL/dalpha [em radianos] - Lab 4
 
 def calcular_Ude(W):
     """
@@ -57,6 +57,9 @@ def calcular_Ude(W):
 # Velocidades de Projeto (em TAS)
 def velocidades_projeto(W, rho_ar, temp_ar):
     W_S = W / S
+    # Defina uma velocidade máxima de cruzeiro estrutural em EAS (ex: 320 nós)
+    Vc_max_EAS_kt = 320.0 
+    Vc_max_EAS_ms = Vc_max_EAS_kt * 0.514444 # convertendo para m/s
     
     # Velocidade de Estol (TAS)
     V_s = math.sqrt((2 * W_S) / (rho_ar * CL_max))
@@ -65,15 +68,23 @@ def velocidades_projeto(W, rho_ar, temp_ar):
     # Velocidade de Manobra (TAS)
     V_A = V_s * math.sqrt(n_limit_pos)
     n_A = n_limit_pos
-    
+        
     # Velocidade de Cruzeiro (TAS)
-    V_C = Mach_cruise * math.sqrt(1.4 * 287.0 * temp_ar)
-
-    # Velocidade de Mergulho (TAS equivalente à VD em EAS)
-    V_D_min = 1.25 * V_C 
+    # Opção 1: Via Mach
+    V_C_Mach = Mach_cruise * math.sqrt(1.4 * 287.0 * temp_ar)
     
-    return V_s, n_s, V_A, n_A, V_C, V_D_min
+    # Opção 2: Via Limite EAS (convertendo EAS -> TAS para essa altitude)
+    # rho_SL = 1.225
+    # TAS = EAS * sqrt(rho_SL / rho_ar)
+    V_C_EAS = Vc_max_EAS_ms * math.sqrt(1.225 / rho_ar)
 
+    # A V_C será a MENOR entre as duas (limitada por Mach ou por EAS)
+    V_C = min(V_C_Mach, V_C_EAS)
+
+    # Velocidade de Mergulho (TAS)
+    V_D_min = 1.25 * V_C
+        
+    return V_s, n_s, V_A, n_A, V_C, V_D_min
 
 def pico_rajada_1_cosseno(W_S, rho_ar, V_e, U_de):
     """
@@ -381,15 +392,11 @@ MTOW      = pesos[0]            # peso máximo de decolagem
 MZFW      = pesos[0] - pesos[1] # peso máximo sem combustível
 
 # Regional TBP's 
-# Roskam
-W_frac_engine_start = 0.990
-W_frac_taxi = 0.990  
+# Roskam 
 W_frac_take_off = 0.995 
 W_frac_climb = 0.98 
 
 frac_pre_cruise = (
-    W_frac_engine_start *
-    W_frac_taxi *
     W_frac_take_off *
     W_frac_climb 
 )
@@ -405,5 +412,5 @@ MLW = MTOW * MLW_frac
 
 rodar_caso(MTOW,      'Sea Level', "MTOW @ Nível do Mar")
 rodar_caso(MZFW,      'Sea Level', "MZFW @ Nível do Mar")
-rodar_caso(W_projeto, '10000',     "Peso de Cruzeiro @ 10000 ft")
-rodar_caso(MLW,       '10000',     "MLW @ 10000 ft")
+rodar_caso(W_projeto, '11000',     "Peso de Cruzeiro @ 11000 ft")
+rodar_caso(MLW,       '11000',     "MLW @ 11000 ft")
