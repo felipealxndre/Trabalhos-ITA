@@ -9,24 +9,32 @@ import design_tools_optmized as dt
 aircraft = dt.my_aircraft()
 
 gravity = 9.81
-W0_guess = 43090*gravity
-T0_guess = 125600
-Mach_cruise = 0.75
-altitude_cruise = 11000
-range_cruise  = 2390000
-Mach_altcruise = 0.4
-range_altcruise = 370000
-altitude_altcruise = 4572
-loiter_time = 2700
-altitude_takeoff = 0
-distance_takeoff = 1520
-TO_flap_def = 0.34906585039887
+g = 9.81 # Aceleração da gravidade
+T0_guess = 125600 #Chute inicial
+W0_guess = 490000.0 #Chute inicial
+altitude_cruise = 11000.0000 #Carteado
+Mach_cruise = 0.7500000 #Range de 0.75 a 0.80
+range_cruise = 3700e3 # Req projeto
+range_altcruise = 370400 # 200 NM
+loiter_time = 2700.00000 # 45 minutos
+altitude_altcruise = 4572.00000 # Caso de testess
+Mach_altcruise = 0.40000000 #Carteado
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
+
+TO_flap_def = 20 * np.pi / 180 
+LD_flap_def = aircraft['data']['flap']['max_def']
 TO_slat_def = 0
-altitude_landing = 0
-distance_landing = 1520
-LD_flap_def = 0.69813170079773
 LD_slat_def = 0
+h_ground = 10.668
+altitude_cruise = 11000
+altitude_takeoff = 0.0
+altitude_landing = 0.0
 MLW_frac = 0.84
+
+distance_takeoff = 1800.0 #Req projeto
+distance_landing = 1150.0 # Req projeto
 
 
 new_dimensions = dt.geometry(aircraft) # Calcula as dimensões da aeronave.

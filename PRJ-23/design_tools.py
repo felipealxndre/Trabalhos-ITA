@@ -135,7 +135,7 @@ def my_aircraft():
    
     ldg = {'xnlg': 2.8,
            'xmlg': 16.3,
-           'ymlg': 2.47,
+           'ymlg': 3,
            'z': -3.67}
    
     aircraft['dimensions']['ldg'] = ldg

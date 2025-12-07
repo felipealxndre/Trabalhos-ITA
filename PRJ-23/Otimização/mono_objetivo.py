@@ -365,3 +365,60 @@ plt.savefig('PRJ-23\\Otimização\\Resultados\\constraints_history.png', dpi=500
 print('Restrições finais desnormalizadas: ')
 print(f'Delta S_wlan: {confun(Xopt)[0]* references["deltaS_wlan"]}')
 pprint(confun(Xopt))
+
+
+
+print("\n" + "="*30 + " TABELA DE VARIÁVEIS DE PROJETO " + "="*30)
+
+# 1. Tabela de Variáveis (Batentes)
+var_names_clean = ['AR_w', 'Sw', 'sweep_w', 'Cht', 'xnlg', 'xmlg', 'ymlg']
+var_data = []
+tol_vars = 1e-3
+
+for i, val_norm in enumerate(Xopt):
+    var_name = var_names_clean[i]
+    
+    # Recalcula o valor real
+    if var_name == 'sweep_w':
+        lower, upper = bounds[var_name]
+        real_val = val_norm * (upper - lower) + lower
+    else:
+        lower, upper = bounds[var_name]
+        real_val = val_norm * (upper - lower) + lower
+
+    # Verifica Status
+    if val_norm <= tol_vars:
+        status = "BATENTE INF."
+    elif val_norm >= (1.0 - tol_vars):
+        status = "BATENTE SUP."
+    else:
+        status = "OK"
+        
+    var_data.append([var_name, status, round(val_norm, 4), round(real_val, 4), f"[{lower}, {upper}]"])
+
+df_vars_final = pd.DataFrame(var_data, columns=['Variável', 'Status', 'Valor Norm.', 'Valor Real', 'Limites'])
+print(df_vars_final.to_string(index=False))
+
+
+print("\n" + "="*30 + " TABELA DE RESTRIÇÕES " + "="*30)
+
+# 2. Tabela de Restrições (Ativas)
+final_cons_values = confun(Xopt)
+cons_data = []
+tol_cons = 1e-4
+
+for i, val in enumerate(final_cons_values):
+    label = constraint_labels[i].replace('$', '').replace('\\', '') # Limpa LaTeX
+    
+    if val < -tol_cons:
+        status = "VIOLADA"
+    elif abs(val) <= tol_cons:
+        status = "ATIVA"
+    else:
+        status = "INATIVA (Folga)"
+        
+    cons_data.append([label, status, round(val, 6)])
+
+df_cons_final = pd.DataFrame(cons_data, columns=['Restrição', 'Status', 'Margem Final'])
+print(df_cons_final.to_string(index=False))
+print("\n")
