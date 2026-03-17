@@ -8,7 +8,6 @@ df = pd.read_csv('https://docs.google.com/spreadsheets/d/1Bo60Tu0unJoOLFab4Mrt0w
 
 BASE_URL = "https://aeronaves.anac.gov.br/aeronaves"
 
-# 1. Busca todos os tipos ICAO disponíveis na ANAC
 resp = requests.get(f"{BASE_URL}/get_dados_dominio_filtros.asp?tipo=tipo_icao")
 icao_anac = {item["id"]: item["nome"] for item in resp.json()}
 icao_ids = list(icao_anac.keys())
@@ -37,9 +36,9 @@ def get_num_aeronaves(icao_code: str) -> int:
                 return int(match.group(1))
     return 0
 
-# 2. Para cada Type Designator único, acha o ICAO correspondente e busca o total
-icao_map = {}   # Type Designator -> icao_code encontrado
-total_map = {}  # Type Designator -> num_aeronaves
+# Para cada Type Designator único, acha o ICAO correspondente e busca o total
+icao_map = {} 
+total_map = {}
 
 for td in df["Type Designator"].dropna().unique():
     icao = encontrar_icao(td)
