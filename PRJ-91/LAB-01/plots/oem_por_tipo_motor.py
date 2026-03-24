@@ -37,7 +37,14 @@ def plot(civil, results_dir):
 
     out = os.path.join(results_dir, 'categoria_motor')
     os.makedirs(out, exist_ok=True)
+    callout_map = {
+        'Pistão': ['Outros', 'Enstrom'],
+        'Monomotor Turbina': ['Outros'],
+        'Bimotor Turbina': ['Outros'],
+    }
+
     for cat in CAT_ORDER:
         sub = civil[civil['Motor Cat'] == cat]
         data = _top_oem(sub)
-        pizza(data, os.path.join(out, f'oem_motor_{_slug(cat)}.png'))
+        pizza(data, os.path.join(out, f'oem_motor_{_slug(cat)}.png'),
+              callout=callout_map.get(cat, []))

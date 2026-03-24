@@ -14,4 +14,5 @@ def plot(civil, results_dir):
 
     out = os.path.join(results_dir, 'distribuicao_frota')
     os.makedirs(out, exist_ok=True)
-    pizza(dict(top), os.path.join(out, 'participacao_oem.png'))
+    pizza(dict(top), os.path.join(out, 'participacao_oem.png'),
+          callout=['Outros', 'MD Helicopters'])

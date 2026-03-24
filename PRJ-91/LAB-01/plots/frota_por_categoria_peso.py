@@ -8,7 +8,7 @@ CAT_ORDER = ['Leve', 'Médio', 'Médio-pesado', 'Pesado']
 
 def plot(civil, results_dir):
     turbina = civil[civil['Tipo de Motor'] == 'Turbina'].copy()
-    totals = turbina.groupby('Categoria de Peso')['Unidades'].sum().reindex(CAT_ORDER)
+    totals = turbina.groupby('Categoria de Peso')['Unidades'].sum().sort_values(ascending=False)
 
     out = os.path.join(results_dir, 'categoria_peso')
     os.makedirs(out, exist_ok=True)

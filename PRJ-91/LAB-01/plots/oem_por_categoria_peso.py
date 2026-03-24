@@ -30,4 +30,5 @@ def plot(civil, results_dir):
     for cat in CAT_ORDER:
         sub = turbina[turbina['Categoria de Peso'] == cat]
         data = _top_oem(sub)
-        pizza(data, os.path.join(out, f'oem_peso_{_slug(cat)}.png'))
+        pizza(data, os.path.join(out, f'oem_peso_{_slug(cat)}.png'),
+              callout=['Outros'])

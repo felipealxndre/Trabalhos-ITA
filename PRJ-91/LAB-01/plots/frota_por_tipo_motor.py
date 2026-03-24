@@ -18,7 +18,7 @@ def _classificar_motor(row):
 def plot(civil, results_dir):
     civil = civil.copy()
     civil['Motor Cat'] = civil.apply(_classificar_motor, axis=1)
-    totals = civil.groupby('Motor Cat')['Unidades'].sum().reindex(CAT_ORDER)
+    totals = civil.groupby('Motor Cat')['Unidades'].sum().sort_values(ascending=False)
 
     out = os.path.join(results_dir, 'categoria_motor')
     os.makedirs(out, exist_ok=True)
